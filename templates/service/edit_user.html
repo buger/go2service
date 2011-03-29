@@ -1,0 +1,24 @@
+{% extends "./workspace.html" %}
+{% block content %}
+<h1>Редактирование прав пользоваля</h1>
+<form action="/service/user/{{user_model.key.id}}" method="POST" data-remote="true">
+    <label>Пользователь:</label><span>{{user_model.user.nickname}} {{user_model.user.email}}</span>
+    <fieldgroup>
+        <ol>
+            <li>
+                <label>
+                    <input type="checkbox" name="roles[]" value="1" {%if user_model.is_worker%}checked="checked"{%endif%} />
+                    Может редактировать заявки
+                </label>
+            </li>
+            <li>
+                <label>
+                    <input type="checkbox" name="roles[]" value="2" {%if user_model.is_admin%}checked="checked"{%endif%}/>
+                    Может управлять пользователями
+                </label>
+            </li>
+        </ol>
+    </fieldgroup>
+    <input type="submit" value="Сохранить" />
+</form>
+{% endblock %}

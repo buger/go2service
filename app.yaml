@@ -1,5 +1,5 @@
 application: go2serviceru
-version: alpha
+version: beta
 runtime: python
 api_version: 1
 
@@ -7,13 +7,13 @@ default_expiration: "10d"
 
 handlers:
 - url: /css
-  static_dir: css
+  static_dir: media/css
 
 - url: /js
-  static_dir: js
+  static_dir: media/js
 
 - url: /images
-  static_dir: images
+  static_dir: media/images
 
 - url: /PIE.htc
   static_files: PIE.htc
@@ -24,12 +24,6 @@ handlers:
   static_files: favicon.png
   upload: favicon.png
 
-- url: /
-  script: main_handler.py
-
-- url: /media/.*
-  script: main_handler.py
-
 - url: /admin
   script: main_handler.py
   login: admin
@@ -38,4 +32,5 @@ handlers:
   script: main_handler.py
   login: admin
 
-
+- url: /.*
+  script: main_handler.py

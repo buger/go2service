@@ -1,0 +1,149 @@
+h1, h3, h3, h4 { font-weight: bold;}
+h1 { font-size: 197% }
+h2 { font-size: 174% }
+h3 { 
+    font-size: 116%;
+    margin-top: 20px;
+}
+
+.center {
+    margin: 0 auto;
+    margin-top: 20%;    
+    text-align: center;
+}
+
+.container {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.login {
+    width: 200px;
+}
+
+.confirm {
+    width: 410px;
+}
+
+#admin-panel {
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+    padding: 5px;
+    position: relative;
+    height: 20px;
+}
+
+#admin-panel .current_user {
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+#admin-panel .left {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
+#admin-panel .action {
+    margin-left: 10px;
+    font-size: 112%;
+}
+
+.content {
+    margin: 0 auto;
+    width: 960px;
+}
+
+form {
+    margin-top: 20px;
+}
+form li {
+    padding: 15px;
+}
+
+input[type=submit] {
+    padding: 5px 15px;
+}
+
+form label {
+    display: inline-block;
+    width: 20%;
+    position: absolute;
+    top: 15px;
+    left: 5px;
+}
+
+form li {
+    position:relative;
+    padding-left: 20%;
+}
+
+input[type=text] {
+    border: 1px solid #ccc;
+    padding: 5px;
+    width: 300px;
+}
+
+textarea {
+    border: 1px solid #ccc;
+    padding: 5px;
+    width: 300px;
+    height: 100px;
+}
+
+ol.issues li {
+    padding: 5px;
+    margin: 5px;
+}
+
+li.issue_state_0, li.issue_state_1 {
+    border-left: 5px solid green;
+}
+
+li.issue_state_2 {
+    border-left: 5px solid #FF7F00;
+}
+
+li.issue_state_3 {
+    border-left: 5px solid blue;
+}
+
+li.issue_state_4 {
+    border-left: 5px solid red;
+}
+
+
+
+ol.issues .state {
+    font-size: 85%;
+    margin-left: 5px;
+    display: inline-block;
+    width: 90px;
+    white-space: nowrap;
+}
+
+ol.issues .updated, ol.issues .user {
+    font-size: 85%;
+    margin-left: 10px;
+}
+
+ol.issues .latest_changes {
+    margin-top: 10px;
+    font-size: 85%;
+}
+
+.float {
+    float: left;
+}
+
+.edit {
+    width: 60%;
+}
+
+.changes {
+    width: 39%;
+}
+
+.changes li {
+    padding: 5px;
+}

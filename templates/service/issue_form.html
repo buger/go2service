@@ -1,0 +1,65 @@
+{% extends "./workspace.html" %}
+{% block content %}
+<div class="edit float">
+    {% if issue.is_saved %}
+    <h1>Редактирование заявки</h1>    
+    {% else %}
+    <h1>Создание заявки</h1>
+    {% endif %}
+    
+    <form action={{issue.url}} method="POST">        
+        <ol>
+            <li>
+                <label>Создатель:</label>
+                <span>{{issue.created_by.email}}</span>
+            </li> 
+            <li>
+                <label>Состояние:</label>
+                <select name="state" {% if not issue.is_saved %}disabled{%endif%}>
+                    {% for i in issue.states %}
+                    <option {% ifequal issue.state i.0 %}selected{% endifequal %} value="{{i.0}}">{{i.1}}</option>
+                    {% endfor %}
+                </select>
+                {% if not issue.is_saved %}
+                <input type="hidden" value="{{issue.state}}" name="state"/>
+                {%endif%}
+            </li>
+            <li>
+                <label>Тема:</label>
+                <input name="title" type="text" value="{{issue.title}}"/>
+            </li>
+            <li>
+                <label>Текст:</label>
+                <textarea name="text">{{issue.text}}</textarea>                
+            </li>
+            {% if issue.is_saved %}
+            <li>
+                <a href="javascript:;" onclick="$(this).next().show(); $(this).remove();">Добавить комментарий</a>
+                <div id="change_comment" style="display: none">
+                    <label>Комментарий:</label>                    
+                    <textarea name="comment"></textarea>
+                </div>
+            </li>  
+            {% endif %}
+            <li>
+                {% if issue.is_saved %}
+                <input type="submit" value="Обновить"/>
+                {% else %}
+                <input type="submit" value="Создать"/>
+                {% endif %}
+            <li>
+        </ol>
+    </form>
+</div>
+{% if issue.is_saved %}
+<div class="changes float">
+    <h3>История изменения заявки</h3>
+    
+    <ul>
+        {% for change in issue.latest_changes %}
+        <li>{{change}}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

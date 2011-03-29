@@ -1,0 +1,17 @@
+{% extends "./workspace.html" %}
+{% block content %}
+<h1>Список заявок</h1>
+<ol class="issues">    
+    {% for issue in issues %}
+    <li class="issue_state_{{issue.state}}">
+        <a href="{{issue.url}}">{{issue.title}}</a>
+        <span class="state">({{issue.state_name}})</span>
+        <span class="updated">Изменена в {{issue.updated_at|date:"H:i d.m"}}</span>
+        <div class="latest_changes">
+            {{issue.latest_change}}
+        </div>
+    </li>
+    {% endfor %}
+</ol>
+<a href="/service/issue">Создать заявку</a>
+{% endblock %}

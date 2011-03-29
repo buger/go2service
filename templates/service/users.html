@@ -1,0 +1,26 @@
+{% extends "./workspace.html" %}
+{% block content %}
+<h1>Пользователи</h1>
+<h3>Пользователи ожидающие подтверждения</h3>
+<ul>
+    {% for user_model in waiting_users %}
+    <li>
+        <span>{{user_model.user.nickname}}</span>
+        <span>{{user_model.user.email}}</span>
+        <a href="/service/user/activate/{{user_model.key.id}}">Активировать</a>        
+    </li>
+    {% endfor %}
+</ul>
+
+<h3>Активные пользователи</h3>
+<ul>
+    {% for user_model in active_users %}    
+    <li>
+        <span>{{user_model.user.nickname}}</span>
+        <span>{{user_model.user.email}}</span>
+        <span class='roles'>({{user_model.roles_string}})</span>
+        <a href="/service/user/{{user_model.key.id}}">Редактировать права</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
