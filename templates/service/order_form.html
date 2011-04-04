@@ -1,0 +1,48 @@
+{% if order.is_saved %}
+<li class="bold">
+    <label>Номер:</label>
+    <span>{{order.key.id}}</span>
+</li>
+<li>
+    <label>Дата создания:</label>
+    <span>{{order.created_at|date:"Y-m-d H:i"}}</span>        
+</li>
+{% else %}
+<input type="hidden" name="order[_create]" value="1" />
+{% endif %}
+<li>
+    <label>Время прибытия</label>
+    <input type="text" class="datetime" name="order[arrival]" value="{{order.arrival|date:"Y-m-d H:i"}}"/>
+</li>
+<li>
+    <label>Время убытия</label>
+    <input type="text" class="datetime" name="order[departure]" value="{{order.departure|date:"Y-m-d H:i"}}"/>
+</li>
+<li>
+    <label>Исполнители</label>
+    <input type="text" name="order[roles]" value="{{order.roles}}"/>
+</li>
+<li>
+    <label>Гарантийный ремонт</label>
+    <input type="checkbox" name="order[warranty]" {% if order.warranty %} checked {% endif %}/>
+</li>
+<li class="no-padding">
+    <table id="order_work_table" data-url="/service/document/{{order.key.id}}/work"></table>
+    <div id="order_work_pager"></div>
+</li>
+<li class="no-padding">
+    <table id="order_materials_table" data-url="/service/document/{{order.key.id}}/materials"></table>
+    <div id="order_materials_pager"></div>
+</li>
+<li>
+    <label>Итого к оплате</label>        
+    <span>0</span>
+</li>
+<li>
+    <label>Тип оплаты</label>
+    <select name="order[pay_type]">
+        {% for pay_type in order.pay_types %}
+        <option {% ifequal order.pay_type pay_type.0 %}selected{% endifequal %} value="{{pay_type.0}}">{{pay_type.1}}</option>
+        {% endfor %}
+    </select>
+</li>

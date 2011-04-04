@@ -1,0 +1,33 @@
+{% if invoice.is_saved %}
+<li class="bold">
+    <label>Номер:</label>
+    <span>{{invoice.key.id}}</span>
+</li>
+<li>
+    <label>Дата создания:</label>
+    <span>{{invoice.created_at|date:"Y-m-d H:i"}}</span>        
+</li>
+{% else %}
+<input type="hidden" name="invoice[_create]" value="1" />
+{% endif %}
+<li>
+    <label>Время выставления</label>
+    <input type="text" class="datetime" name="invoice[bill_date]" value="{{order.bill_date|date:"Y-m-d H:i"}}" />
+</li>
+<li>
+    <label>Состояние</label>
+    <select name="invoice[state]">
+        {% for i in invoice.states %}
+        <option {% ifequal issue.state i.0 %}selected{% endifequal %} value="{{i.0}}">{{i.1}}</option>
+        {% endfor %}
+    </select>    
+</li>
+<li>
+    <label>Оплачено</label>
+    <input type="checkbox" {% if invoice.payed %}checked{% endif %} name="invoice[payed]" />
+</li>
+<li>
+    <label>Дата оплаты</label>
+    {{order.pay_date|date:"Y-m-d H:i"}}&nbsp;
+</li>
+

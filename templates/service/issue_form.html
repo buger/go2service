@@ -7,36 +7,63 @@
     <h1>Создание заявки</h1>
     {% endif %}
     
-    <form action={{issue.url}} method="POST">        
+    <form class="service_form" action={{issue.url}} method="POST">        
         <ol>
+            {% if issue.is_saved %}
             <li>
-                <label>Создатель:</label>
-                <span>{{issue.created_by.email}}</span>
-            </li> 
+                <label class="bold">Номер заявки</label>
+                <span class="bold">{{issue.key.id}}</span>
+            </li>             
+            {% endif %}
             <li>
-                <label>Состояние:</label>
-                <select name="state" {% if not issue.is_saved %}disabled{%endif%}>
+                <label>Тема</label>
+                <input type="text" name="title" value="{{issue.title}}" />
+            </li>
+            <li>
+                <label>Состояние</label>
+                <select name="state">
                     {% for i in issue.states %}
                     <option {% ifequal issue.state i.0 %}selected{% endifequal %} value="{{i.0}}">{{i.1}}</option>
                     {% endfor %}
                 </select>
-                {% if not issue.is_saved %}
-                <input type="hidden" value="{{issue.state}}" name="state"/>
-                {%endif%}
             </li>
+
+            <li class="header">Информация о клиенте</li>
+            {% include "./company_info.html" %} 
+
+            <li class="header">Наряд заказ</li>
+            {% with issue.order as order %}
+            {% include "./order_form.html" %} 
+            {% endwith %}
+
+            <li class="header">Счет</li>
+            {% with issue.invoice as invoice %}
+            {% include "./invoice_form.html" %} 
+            {% endwith %}
+
+            <li class="header">Договор</li>
+            {% with issue.document as document %}
+            {% include "./document_form.html" %} 
+            {% endwith %}
+
+            <li class="header">Дополниетельные поля заявки</li>
             <li>
-                <label>Тема:</label>
-                <input name="title" type="text" value="{{issue.title}}"/>
-            </li>
-            <li>
-                <label>Текст:</label>
+                <label>Примечание</label>
                 <textarea name="text">{{issue.text}}</textarea>                
             </li>
+            <li>
+                <label>Создатель</label>
+                <span>{{issue.created_by.email}}</span>
+            </li> 
             {% if issue.is_saved %}
+            <li>
+                <label>Дата создания</label>
+                <span>{{issue.created_at|date:"Y-m-d H:i"}}</span>
+            </li> 
             <li>
                 <a href="javascript:;" onclick="$(this).next().show(); $(this).remove();">Добавить комментарий</a>
                 <div id="change_comment" style="display: none">
-                    <label>Комментарий:</label>                    
+                    <label>Комментарий</label>                    
                     <textarea name="comment"></textarea>
                 </div>
             </li>  

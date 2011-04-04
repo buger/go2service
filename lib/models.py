@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from google.appengine.ext import db
+from google.appengine.ext.db import polymodel
 from google.appengine.ext import blobstore
 from google.appengine.api import users
 
@@ -22,7 +23,33 @@ class i18nEntry(db.Model):
 class FileEntry(db.Model):
     url = db.StringProperty()
 
-class UserModel(db.Model):
+
+class HistoryEventModelLevel(db.Model):
+    date = db.DateTimeProperty(auto_now = True)
+    model = db.StringProperty()
+    model_id = db.IntegerProperty()
+    action = db.StringProperty(['insert', 'update', 'delete'])
+    change = JsonProperty()
+    changed_by = db.UserProperty()
+
+
+class Contact(polymodel.PolyModel):
+    name = db.StringProperty()
+    phones = db.ListProperty(db.PhoneNumber)
+    postal_address = db.ListProperty(db.PostalAddress)
+    notes = db.TextProperty()
+    created_at = db.DateTimeProperty(auto_now_add = True)
+
+
+class Company(Contact):
+    pass
+
+
+class Person(Contact):
+    pass
+
+
+class UserModel(Contact):
     WORKER_ROLE = 1
     ADMIN_ROLE = 2
 
@@ -50,13 +77,99 @@ class UserModel(db.Model):
         return ','.join(str_arr)
 
 
-class HistoryEventModelLevel(db.Model):
-    date = db.DateTimeProperty(auto_now = True)
-    model = db.StringProperty()
-    model_id = db.IntegerProperty()
-    action = db.StringProperty(['insert', 'update', 'delete'])
-    change = JsonProperty()
-    changed_by = db.UserProperty()
+
+class BaseDocument(polymodel.PolyModel):
+    created_at = db.DateTimeProperty(auto_now_add = True)
+    updated_at = db.DateTimeProperty(auto_now = True)
+
+
+class Order(BaseDocument):
+    CASH = 1
+    CASHLESS = 2
+
+    PAY_TYPES = {
+        CASH: 'Наличная',
+        CASHLESS: 'Безналичная'
+    }
+
+    def pay_types(self):
+        return Order.PAY_TYPES.items()
+
+    def get_name(self):
+        return "Наряд/Заказ №%d" % self.key().id()
+
+    pay_type = db.IntegerProperty(default = CASH)
+    arrival = db.DateTimeProperty()
+    departure = db.DateTimeProperty()
+    roles = db.StringProperty(default = "")
+    warranty = db.BooleanProperty(default = False)
+
+
+class Invoice(BaseDocument):
+    PRICE_QUERY = 1
+    ADVANCE = 2
+    DOCUMENT_WRITTEN = 3
+    DOCUMENT_OBTAINED = 4
+    CLOSED = 5
+    CANCELED = 6
+
+    STATES = {
+        PRICE_QUERY: 'Запрос цен',
+        ADVANCE: 'Аванс',
+        DOCUMENT_WRITTEN: 'Документы выписаны',
+        DOCUMENT_OBTAINED: 'Документы переданы',
+        CLOSED: 'Закрыта',
+        CANCELED: 'Аннулировано'
+    }
+
+    def states(self):
+        return Invoice.STATES.items()
+
+    def get_name(self):
+        return "Счет №%d" % self.key().id()
+
+    bill_date = db.DateTimeProperty()
+    state = db.IntegerProperty()
+    payed = db.BooleanProperty()
+    pay_date = db.DateTimeProperty()
+
+
+class Document(BaseDocument):
+    USER = 1
+    INCIDENT = 2
+    ONETIME = 3
+
+    TYPES = {
+        USER: 'Абонентский',
+        INCIDENT: 'Инцидентный',
+        ONETIME: 'Разовый'
+    }
+
+    def types(self):
+        return Document.TYPES.items()
+
+    def get_name(self):
+        return "Договор №%d" % self.key().id()
+
+    doc_type = db.IntegerProperty()
+
+    start = db.DateTimeProperty()
+    end = db.DateTimeProperty()
+
+    role = db.StringProperty(default = "")
+
+    doc = db.TextProperty()
+    scan = db.BlobProperty()
+
+
+class DocumentContent(db.Expando):
+    content_type = db.IntegerProperty()
+
+
+
+class Role(db.Model):
+    contractor = db.ReferenceProperty(Contact)
+    role_type = db.IntegerProperty()
 
 
 class Issue(db.Model):
@@ -66,30 +179,45 @@ class Issue(db.Model):
     WAITING = 1
     PROCESSING = 2
     DONE = 3
-    DECLINE = 4
+    CLOSED = 4
+    DECLINED = 5
 
     STATES = {
         NEW: u'Создание',
-        WAITING: u'На рассмотрении',
+        WAITING: u'В пути',
         PROCESSING: u'Выполняется',
-        DONE: u'Выполнена',
-        DECLINE: u'Отменена'
+        DONE: u'Выполнено',
+        CLOSED: u'Закрыта',
+        DECLINED: u'Отменена'
     }
 
     FIELD_NAMES = {
         'title': u"Тема",
         'text': u"Текст",
         'comment': u"Комментарий",
-        'state': u"Состояние"
+        'state': u"Состояние",
+        'company_name': u'Наименование компании',
+        'company_item': u'Объект',
+        'company_contact': u'Контактное лицо',
+        'contact_phone': u'Телефон контактного лица',
     }
 
-    AUDIT = ['title', 'text', 'comment', 'state']
+    AUDIT = ['text', 'comment', 'state', 'company_name', 'company_item', 'company_contact', 'contact_phone']
 
     title = db.StringProperty(default = "")
     text = db.TextProperty(default = "")
     comment = db.TextProperty(default = "")
     state = db.IntegerProperty(default = NEW)
     created_by = db.UserProperty()
+
+    invoice = db.ReferenceProperty(Invoice)
+    order = db.ReferenceProperty(Order)
+    document = db.ReferenceProperty(Document)
+
+    company_name = db.StringProperty(default = "")
+    company_item = db.StringProperty(default = "")
+    company_contact = db.StringProperty(default = "")
+    contact_phone = db.StringProperty(default = "")
 
     created_at = db.DateTimeProperty(auto_now_add = True)
     updated_at = db.DateTimeProperty(auto_now = True)
@@ -101,7 +229,15 @@ class Issue(db.Model):
             return "/service/issue"
 
     def states(self):
-        return Issue.STATES.items()
+        new_state = (Issue.NEW, Issue.STATES[Issue.NEW])
+        values = Issue.STATES.items()
+
+        if self.is_saved():
+            values.remove(new_state)
+        else:
+            values = [new_state]
+
+        return values
 
     def state_name(self):
         return Issue.STATES[self.state]
@@ -122,7 +258,7 @@ class Issue(db.Model):
                     change[1] = Issue.STATES[int(change[1])]
                     change[2] = Issue.STATES[int(change[2])]
 
-                str_arr.append(u"Измененно значение '%s' с '%s' на '%s'" % (column_name, change[1], change[2]))
+                str_arr.append(u"<b>%s</b> с '%s' на '%s'" % (column_name, change[1], change[2]))
 
         return "<br/>".join(str_arr)
 
@@ -132,7 +268,7 @@ class Issue(db.Model):
         return self.format_changes(change)
 
     def latest_changes(self):
-        changes = HistoryEventModelLevel.all().order("-date").filter('model_id =', self.key().id()).filter("model =", "Issue").fetch(10)
+        changes = HistoryEventModelLevel.all().order("-date").filter("model =", "Issue").filter('model_id =', self.key().id()).fetch(10)
 
         formatted_changes = []
         for change in changes:

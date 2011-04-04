@@ -1,9 +1,28 @@
-h1, h3, h3, h4 { font-weight: bold;}
+.ui-timepicker-div .ui-widget-header{ margin-bottom: 8px; }
+.ui-timepicker-div dl{ text-align: left; }
+.ui-timepicker-div dl dt{ height: 25px; }
+.ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-datepicker-week-col { text-align: center; }
+
+* {
+    color: #333;
+}
+
+.ui-widget {
+    font-size: 93%;
+}
+
+h1, h3, h3, h4, strong, b, .bold { font-weight: bold;}
 h1 { font-size: 197% }
 h2 { font-size: 174% }
 h3 { 
     font-size: 116%;
     margin-top: 20px;
+}
+
+*[disabled] {
+    color: #666;
 }
 
 .center {
@@ -30,12 +49,15 @@ h3 {
     text-align: left;
     padding: 5px;
     position: relative;
-    height: 20px;
+    height: 21px;
+
+    background: #F5F8F9; 
 }
 
 #admin-panel .current_user {
     margin-left: 20px;
     margin-right: 10px;
+    line-height: 22px;
 }
 
 #admin-panel .left {
@@ -46,45 +68,90 @@ h3 {
 
 #admin-panel .action {
     margin-left: 10px;
-    font-size: 112%;
+    font-size: 123.1%;
+    float: left;
+    line-height: 22px;
+
+    color: #333;
+}
+
+#admin-panel a.add {
+    text-indent: -999999px;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+
+    background: url(/images/service/plus.png);
+
+    opacity: 0.3;
+}
+
+#admin-panel a.add:hover {
+    opacity: 1;
 }
 
 .content {
     margin: 0 auto;
     width: 960px;
+
+    padding-top: 20px;
 }
 
-form {
+form.service_form {
     margin-top: 20px;
 }
-form li {
+
+form.service_form li {
     padding: 15px;
 }
 
-input[type=submit] {
+form.service_form li > input[type=submit] {
     padding: 5px 15px;
 }
 
-form label {
+form.service_form li > label {
     display: inline-block;
-    width: 20%;
+    width: 200px;
     position: absolute;
-    top: 15px;
-    left: 5px;
+    top: 20px;
+    left: 15px;
+    font-size: 93%;
 }
 
-form li {
+form.service_form ol > li {
     position:relative;
-    padding-left: 20%;
+    padding-left: 220px;
+    font-size: 108%;
 }
 
-input[type=text] {
+form.service_form ol > li.no-padding {
+    padding-left: 15px;
+}
+
+
+form.service_form ol > li.header {
+    padding-left: 5px;
+    font-weight: bold;
+}
+
+form.service_form li > select {
+    padding: 5px;
+}
+
+form.service_form li > input[type=text] {
     border: 1px solid #ccc;
     padding: 5px;
     width: 300px;
 }
 
-textarea {
+form.service_form li > input.datetime {
+    width: 150px;
+    background: url(/images/service/calendar.png) center right no-repeat;
+
+    background-position: 140px 5px;
+}
+
+form.service_form li > textarea {
     border: 1px solid #ccc;
     padding: 5px;
     width: 300px;
@@ -94,6 +161,24 @@ textarea {
 ol.issues li {
     padding: 5px;
     margin: 5px;
+}
+
+ol.issues .state {
+    font-size: 85%;
+    margin-left: 5px;
+    display: inline-block;
+    width: 90px;
+    white-space: nowrap;
+}
+
+ol.issues .updated, ol.issues .user {
+    font-size: 85%;
+    margin-left: 10px;
+}
+
+ol.issues .latest_changes {
+    margin-top: 10px;
+    font-size: 85%;
 }
 
 li.issue_state_0, li.issue_state_1 {
@@ -112,24 +197,13 @@ li.issue_state_4 {
     border-left: 5px solid red;
 }
 
-
-
-ol.issues .state {
-    font-size: 85%;
-    margin-left: 5px;
-    display: inline-block;
-    width: 90px;
-    white-space: nowrap;
+li.issue_state_5 {
+    border-left: 5px solid #eee;
 }
 
-ol.issues .updated, ol.issues .user {
-    font-size: 85%;
-    margin-left: 10px;
-}
-
-ol.issues .latest_changes {
-    margin-top: 10px;
-    font-size: 85%;
+li.issue_state_5 * {
+    color: #666;
+    text-decoration: line-through;
 }
 
 .float {

@@ -1,0 +1,28 @@
+{% extends "./workspace.html" %}
+{% block content %}
+<h1>Журнал документов</h1>
+<form action="/service/documents" method="POST">
+    <ol>
+        <li>
+            <label>Тип документа</label>
+            <select>
+                <option>Все</option>
+                <option>Наряд-Заказ</option>
+                <option>Счет</option>
+                <option>Договор</option>
+            </select>
+        </li>
+        <li>
+            <input type="submit" value="Поиск" />
+        </li>
+    </ol>
+</form>
+
+<ul>
+    {% for doc in documents %}
+    <li>{{doc.get_name}}</a></li>
+    {% endfor %}
+</ul>
+
+<a href="/service/document">Создать документ</a>
+{% endblock %}

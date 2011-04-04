@@ -16,6 +16,8 @@ from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.api import mail
 
+template.register_template_library('with_tag')
+
 class AppHandler(webapp.RequestHandler):
     def guess_lang(self):
         lang = self.request.get('lang')
@@ -74,3 +76,12 @@ def route(string, handler):
 def start():
     application = webapp.WSGIApplication(routes, debug=True)
     run_wsgi_app(application)
+
+class Devnull(AppHandler):
+    def get(self):
+        self.error(200)
+
+    def post(self):
+        self.get()
+
+route('/devnull', Devnull)

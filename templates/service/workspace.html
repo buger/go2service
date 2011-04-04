@@ -2,8 +2,12 @@
 {% block body %}
 <div id="admin-panel">
     <div class="right">
-        <a href="/service/issue" class="action">Создать заявку</a>
-        <a href="/service/issues" class="action">Список заявок</a>
+        <a href="/service/issues" class="action">Журнал заявок</a>
+        <a href="/service/issue" class="action add" title="Создать заявку"></a>
+
+        <a href="/service/documents" class="action" style="margin-left: 30px;">Журнал документов</a>
+        <a href="/service/documents/new" class="action add" title="Создать документ"></a>
+
     </div>
     <div class="left">
         {% if admin %}

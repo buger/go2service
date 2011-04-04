@@ -1,0 +1,32 @@
+{% if document.is_saved %}
+<li class="bold">
+    <label>Номер:</label>
+    <span>{{document.key.id}}</span>
+</li>
+<li>
+    <label>Дата создания:</label>
+    <span>{{document.created_at|date:"Y-m-d H:i"}}</span>        
+</li>
+{% else %}
+<input type="hidden" name="document[_create]" value="1" />
+{% endif %}
+<li>
+    <label>Тип договора</label>
+    <select name="document[doc_type]">
+        {% for i in document.types %}
+        <option {% ifequal document.doc_type i.0 %}selected{% endifequal %} value="{{i.0}}">{{i.1}}</option>
+        {% endfor %}
+    </select>    
+</li>
+<li>
+    <label>Начало действия</label>
+    <input type="text" class="datetime" name="document[start]" value="{{document.start|date:"Y-m-d H:i"}}"/>
+</li>
+<li>
+    <label>Окончание действия</label>
+    <input type="text" class="datetime" name="document[end]" value="{{document.end|date:"Y-m-d H:i"}}"/>
+</li>
+<li>
+    <label>Представитель клиента</label>
+    <input type="text" name="document[role]" value="{{document.role}}"/>
+</li>
