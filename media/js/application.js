@@ -1,3 +1,5 @@
+Backbone.emulateHTTP = true;
+
 $.timepicker.regional.ru = {
     currentText: 'Сейчас',
     closeText: 'Закрыть',
@@ -65,4 +67,6 @@ $(function(){
     
     initOrderWorkTable();
     initOrderMaterialsTable();
-})
+});
+
+

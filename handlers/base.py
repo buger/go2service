@@ -8,6 +8,7 @@ import logging
 import simplejson as json
 
 from lib.models import *
+from lib.counter import *
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app

@@ -7,13 +7,78 @@ from google.appengine.api import users
 
 import simplejson as json
 
+
 class JsonProperty(db.Property):
+    data_type = db.Text
+
     def get_value_for_datastore(self, model_instance):
         value = getattr(model_instance, self.name, None)
-        return json.dumps(value)
+        return db.Text(json.dumps(value))
     def make_value_from_datastore(self, value):
         return json.loads(value)
 
+def refname_from_key(key):
+    return key.name().split('::')[1]
+
+class Ref(db.Expando):
+    num_id = db.IntegerProperty();
+    name = db.StringProperty()
+    ancestors = db.ListProperty(db.Key)
+    parents = db.ListProperty(db.Key)
+    group = db.BooleanProperty(default = False)
+    props = JsonProperty()
+
+    def toJSON(self, full_info = False):
+        data = {
+            'name'  : self.name,
+            'group' : self.group
+        }
+
+        if self.is_saved():
+            data['id'] = str(self.key())
+            data['num_id'] = str(self.num_id)
+        else:
+            data['id'] = 'new'
+            data['num_id'] = 'Новая запись'
+
+        if full_info:
+            parents = [(str(parent), db.get(parent).name) for parent in self.parents]
+            ancestors = [(str(parent), db.get(parent).name) for parent in self.ancestors]
+
+            data['parents'] = parents
+
+            data['props'] = [
+                { 'id': 'num_id',   'type': 'static', 'value': data['num_id'], 'locked': True },
+                { 'id': 'name',     'type': 'text',   'value': self.name,      'locked': True },
+                { 'id': 'parents',  'type': 'links',  'value': parents,        'locked': True },
+                { 'id': 'ancestors','type': 'links',  'value': ancestors,      'locked': True }
+            ]
+
+            for parent in self.ancestors:
+                parent = db.get(parent)
+
+                if parent.props:
+                    for prop in parent.props:
+                        prop['locked'] = True
+                        prop['inherited_from'] = parent.name
+                        try:
+                            prop['value'] = getattr(self, str(prop['id']))
+                        except:
+                            prop['value'] = ''
+
+                        data['props'].append(prop)
+
+            if self.props:
+                for prop in self.props:
+                    prop['value'] = getattr(self, str(prop['id']))
+                    data['props'].append(prop);
+
+
+        return data
+
+
+class Event(db.Model):
+    pass
 
 class i18nEntry(db.Model):
     msg_id = db.StringProperty()

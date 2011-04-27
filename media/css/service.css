@@ -221,3 +221,120 @@ li.issue_state_5 * {
 .changes li {
     padding: 5px;
 }
+
+ol ol {
+    padding-left: 20px;
+}
+
+.tree {
+    width: auto; 
+}
+
+.tree > * {
+    float: left;
+}
+
+.tree > div {
+    margin-left: 20px;
+}
+
+
+.tree li > div {
+    font-size: 109%;
+}
+
+.tree .add {
+    visibility: hidden;
+    margin-right: 10px;
+    color: green;
+    cursor: pointer;
+}
+
+.tree ol div {
+    position: relative;
+    padding: 5px;
+}
+
+.tree ol div:hover .add {
+    visibility: visible;
+}
+
+.tree ol div a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.tree .toggle {
+    visibility: hidden;
+    cursor: pointer;
+    margin-right: 5px;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.tree .toggle:before {
+    content: "▾";
+}
+
+.tree li.closed .toggle:before {
+    content: "▸";
+}
+
+.tree li.group > div .toggle {
+    visibility: visible;
+}
+
+.tree li.closed > ol {
+    display: none;
+}
+
+.tree form label {
+    width: 150px;
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.tree form li {
+    padding: 8px 0px;
+}
+
+.tree form input[type=text] {
+    border: 1px solid #ccc;
+    padding: 2px;
+    width: 300px;
+}
+
+.tree form input[type=submit] {
+    margin-top: 20px;
+    padding: 5px 10px;
+}
+
+.tree form .delete {
+    margin-left: 10px;
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tree form .add_field {
+    margin-left: 10px;    
+}
+
+.tree label input {
+    width: auto !important;
+}
+
+.tree form .info {
+    color: blue;
+    cursor: help;
+    margin-left: 14px;
+}
+
+.tree form .delete_field {
+    color: red;
+    margin-left: 10px;
+    cursor: pointer;
+}
