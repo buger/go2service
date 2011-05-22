@@ -142,38 +142,38 @@ a:hover {
 .title{ font-family:Arial, Helvetica, sans-serif; font-weight:bold; font-style:italic; color:#7dbc25; font-size:25px; margin-top:75px; padding-left:20px; border-bottom:#7dbc25 solid 1px;}
 
 .content_box{ 
-    font-family:Tahoma, Geneva, sans-serif; 
-    font-size:11px; 
+    font-family:Times New Roman;
+    font-size:11px;
     color:#333;
-    
-    margin-top:40px; 
-    margin-left:10px; 
-    margin-bottom:100px;   
+
+    margin-top:40px;
+    margin-left:10px;
+    margin-bottom:100px;
 }
-.content_box a{ display:block; font-family:Tahoma, Geneva, sans-serif; font-size:12px; font-weight:bold; color:#0167b9; margin-top:10px; margin-bottom:15px;}
+.content_box a{ display:block; font-family:Times New Roman; font-size:12px; font-weight:bold; color:#0167b9; margin-top:10px; margin-bottom:15px;}
 .rjad{width:100%;}
 .first_box{width:22%; float:left; display:block; margin-left:3%;}
 .second_box{ width:30%; float:left; display:block; margin-left:3%;}
 
-.content_box1{ 
-font-family:Tahoma, Geneva, sans-serif; 
-font-size:11px; 
-color:#333; 
+.content_box1{
+font-family:Times New Roman;
+font-size:11px;
+color:#333;
 width: 75%;
-float:left; 
-margin-top:40px; 
-margin-left:10px; 
+float:left;
+margin-top:40px;
+margin-left:10px;
 margin-bottom:100px;
 }
 
-.right_menu { 
-font-family:Times New Roman; 
-font-size:14px;  
-margin-left:90px; 
-width:155px; 
+.right_menu {
+font-family:Times New Roman;
+font-size:14px;
+margin-left:90px;
+width:155px;
 /* float:right; */
 float:left;
-margin-top:50px; 
+margin-top:50px;
 margin-bottom:100px
 }
 
