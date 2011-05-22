@@ -3,7 +3,7 @@
 <head>
 	<title>Ксервису.рф</title>
 	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-	<link rel='stylesheet' type='text/css' href='/css/style.css'>
+	<link rel='stylesheet' type='text/css' href='/css/style.css?1'>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 </head>
 <body>
@@ -20,7 +20,17 @@
         </div>
         {% include "./inc/head.html" %}
         <div id="clear"></div>
-        {% include "./inc/menu.html" %}
+        <div id="menu">
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    {% block menu %}
+                    <td width="20%" align="center" class="news"><a href="news.html">Новости</a></td>
+                    <td width="20%" align="center" class="ourwork"><a href="ourwork.html">Наша работа</a></td>
+                    <td width="20%" align="center" class="company"><a href="company.html">Компания</a></td>
+                    {% endblock %}
+                </tr>	
+            </table>
+        </div>
         <div id="clear"></div>
         <div id="zajav">
             {% block banner %}{% endblock %} 

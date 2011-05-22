@@ -40,6 +40,7 @@ a:hover {
 #menu {
 	height: 21px;
 	background-color: #555;
+    margin-bottom: 50px;
 }
 #menu a {
 	display:block;
@@ -56,6 +57,21 @@ a:hover {
 	background-color:#666;
 	
 }
+
+#menu .active {
+    background: #eee;
+}
+#menu .active a {
+    color: #000;
+
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#menu .active a:hover {
+    background: #eee;
+}
+
 /*----- Zajav -----*/
 #zajav {
 	background-color: #ffffff;
