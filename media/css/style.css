@@ -144,7 +144,7 @@ a:hover {
 .content_box{ 
     font-family:Tahoma, Geneva, sans-serif; 
     font-size:11px; 
-    color:#535353;
+    color:#333;
     
     margin-top:40px; 
     margin-left:10px; 
@@ -158,7 +158,7 @@ a:hover {
 .content_box1{ 
 font-family:Tahoma, Geneva, sans-serif; 
 font-size:11px; 
-color:#535353; 
+color:#333; 
 width: 75%;
 float:left; 
 margin-top:40px; 
@@ -291,7 +291,7 @@ margin-bottom:100px
 
 .work .list li .gray {
     font-size: 10px;
-    color: black;
+    color: #555;
 }
 
 .work_footer {
@@ -327,4 +327,19 @@ margin-bottom:100px
 
 .work_footer ul li {
     line-height: 25px;
+}
+
+.news {
+    list-style: none;
+}
+
+.news li {    
+    font-size: 15px;    
+    margin-bottom: 20px;
+    color: black;
+}
+
+.news li .date {
+    font-size: 11px;
+    color: #555;
 }
