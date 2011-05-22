@@ -75,7 +75,7 @@ h3 {
     color: #333;
 }
 
-#admin-panel a.add {
+#admin-panel a.add, a.add_link{
     text-indent: -999999px;
     display: inline-block;
     width: 24px;
@@ -86,7 +86,7 @@ h3 {
     opacity: 0.3;
 }
 
-#admin-panel a.add:hover {
+#admin-panel a.add:hover, a.add_link:hover {    
     opacity: 1;
 }
 
@@ -228,68 +228,124 @@ ol ol {
 
 .tree {
     width: auto; 
+    white-space: nowrap;
+}
+
+.tree .wrapper {
+    width: 400px;
+    height: 600px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;    
+    outline: 0;
+    padding-top: 20px;
+}
+
+.tree .wrapper .level {    
+    width: 190px;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-right: 10px;
+}
+
+.tree .levels_header {
+    width: 400px;
+}
+
+.tree .levels_header a {
+    margin-right: 5px;
+    display: inline-block;
+    max-width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.tree .levels_header a:after {
+    content: "▸";
+    margin-left: 5px;
+    text-decoration: none;
 }
 
 .tree > * {
     float: left;
 }
 
-.tree > div {
-    margin-left: 20px;
+.tree .item {
+    font-size: 109%;
+    position: relative;
+
+    padding: 2px 0px;    
 }
 
+.tree .item .name {
+    text-decoration: underline;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 190px;
+    display: inline-block;
+}
 
-.tree li > div {
-    font-size: 109%;
+.tree .opened > div .name {
+    font-weight: bold;
+}
+
+.tree div.form {
+    padding-left: 30px;
+    width: 500px;
 }
 
 .tree .add {
-    visibility: hidden;
+    display: none;
     margin-right: 10px;
     color: green;
     cursor: pointer;
 }
 
-.tree ol div {
+.tree .node-root {
+    margin:0;
+    padding: 0;
+    display: none;
+}
+
+.tree .item .panel {
+    position: absolute;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    top: 0px;
+    left: -15px;
+    display: none;
+    font-size: 13px;
+}
+
+.tree .group > .item .panel {
+    left: -30px;
+}
+
+.tree .active > .item .panel {
+    display: block;
+}
+
+.tree .items .item {
     position: relative;
     padding: 5px;
 }
 
-.tree ol div:hover .add {
+.tree .items div:hover .add {
     visibility: visible;
 }
 
-.tree ol div a:hover {
+.tree .items div a:hover {
     cursor: pointer;
     text-decoration: underline;
 }
 
-.tree .toggle {
-    visibility: hidden;
-    cursor: pointer;
-    margin-right: 5px;
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    text-align: center;
-    font-size: 14px;
+.tree .group > .item {
+    border-left: 3px solid #ccc;
 }
 
-.tree .toggle:before {
-    content: "▾";
-}
-
-.tree li.closed .toggle:before {
-    content: "▸";
-}
-
-.tree li.group > div .toggle {
-    visibility: visible;
-}
-
-.tree li.closed > ol {
-    display: none;
-}
 
 .tree form label {
     width: 150px;
@@ -327,6 +383,86 @@ ol ol {
     width: auto !important;
 }
 
+.tree li.state-new > div a.name, .legend .new {
+    background: #77CCA4;
+    border-radius: 5px;
+    padding: 3px;
+    color: white;
+}
+
+.tree li.state-unchanged > div a.name, .legend .unchanged {
+    background: #F0F0F0;
+    border-radius: 5px;
+    padding: 3px;
+    color: #333;
+}
+
+.tree li.state-changed > div a.name, .legend .changed {
+    background: #2A8FBD;
+    border-radius: 5px;
+    padding: 3px;
+    color: white;
+}
+
+.tree .without-editing a.name {    
+    text-decoration: none;
+    cursor: default;
+}
+
+
+.tree .without-editing li div .add {
+    display: none;
+}
+
+.legend {
+    white-space: nowrap;
+}
+
+.legend > div {
+    float: left;
+    margin-right: 10px;
+    cursor: default;
+}
+
+.legend {
+    padding: 10px 0px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.preview h3 {
+    white-space: nowrap;
+}
+
+.preview .complete-import, .merging .next-step {
+    display: inline-block;
+    margin-left: 30px;
+    text-decoration: none;
+    background: #ccc;
+    padding: 3px 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-right: 15px;
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.2, rgb(186,186,186)),
+        color-stop(0.64, rgb(230,230,230))
+    );
+    background-image: -moz-linear-gradient(
+        center bottom,
+        rgb(186,186,186) 20%,
+        rgb(230,230,230) 64%
+    );        
+}
+
+.preview .complete-import:hover {
+    border-color: #aaa;
+}
+
 .tree form .info {
     color: blue;
     cursor: help;
@@ -337,4 +473,36 @@ ol ol {
     color: red;
     margin-left: 10px;
     cursor: pointer;
+}
+
+.import-form .progress {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background: #eee;
+    height: 20px;
+    width: 100%;
+    margin-top: 10px;    
+}
+
+.import-form .progress .bar {
+    background: green;
+    border-radius: 5px;
+    height: 20px;
+}
+
+.import-form h3 {
+    margin: 0px;
+}
+
+.import-form .new-import {
+    text-decoration: underline;
+    color: green;
+    padding-top: 20px;    
+    cursor: pointer;
+    clear: both;
+}
+
+.jspHorizontalBar
+{
+	top: -10px;
 }

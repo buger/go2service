@@ -1,12 +1,17 @@
 {% extends "./workspace.html" %}
 {% block content %}
-<h1>Справочники</h1>
+<h1 style="width: 210px;">Справочники <a href='#add/root' class='add_link' style="float: right; margin-top: 4px;" title="Добавить корневую запись"></a></h1>
 
 <div class="tree">
-    <ol>
-        Loading...
-    </ol>
-    <div></div>
+    <div class="left">
+        <div class="levels_header"></div>
+        <div class="wrapper">
+            Загрузка...
+        </div>
+    </div>
+    <div class="right">
+        <div class='form'></div>
+    </div>
 </div>
 
 {% endblock %}

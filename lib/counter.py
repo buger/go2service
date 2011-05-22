@@ -77,7 +77,7 @@ class CachedCounter(object):
 
         look_ahead_time = 10 + self._update_interval
         memcache_ops = CapabilitySet('memcache', methods=['add'])
-        memcache_down = not memcache_ops.will_remain_enabled_for(look_ahead_time)
+        memcache_down = not memcache_ops.is_enabled()
         if memcache_down or memcache.add(self._lock_key, None, time=self._update_interval):
             # Update the datastore
             incr = int(memcache.get(self._incr_key) or 0) + value

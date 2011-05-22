@@ -59,18 +59,6 @@ class AdminUpdate(AppHandler):
 route('/admin/update', AdminUpdate)
 
 
-class UploadURLsHandler(AppHandler):
-    def get(self):
-        self.render_json([blobstore.create_upload_url('/upload')])
-route('/admin/upload_url', UploadURLsHandler)
-
-
-class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
-    def post(self):
-        self.error(301)
-route('/admin/upload', UploadHandler)
-
-
 class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self, blob_key):
         blob_key = str(urllib.unquote(blob_key))

@@ -2,10 +2,11 @@
 
 from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
-from google.appengine.ext import blobstore
 from google.appengine.api import users
 
 import simplejson as json
+
+from lib.counter import CachedCounter
 
 
 class JsonProperty(db.Property):
@@ -41,8 +42,17 @@ class Ref(db.Expando):
             data['id'] = 'new'
             data['num_id'] = 'Новая запись'
 
+        try:
+            data['state'] = getattr(self, 'state')
+        except:
+            pass
+
         if full_info:
-            parents = [(str(parent), db.get(parent).name) for parent in self.parents]
+            try:
+                parents = [(str(parent), db.get(parent).name) for parent in self.parents]
+            except:
+                parents = []
+
             ancestors = [(str(parent), db.get(parent).name) for parent in self.ancestors]
 
             data['parents'] = parents
@@ -61,21 +71,54 @@ class Ref(db.Expando):
                     for prop in parent.props:
                         prop['locked'] = True
                         prop['inherited_from'] = parent.name
+
                         try:
                             prop['value'] = getattr(self, str(prop['id']))
-                        except:
-                            prop['value'] = ''
+                        except AttributeError:
+                            pass
 
                         data['props'].append(prop)
 
             if self.props:
                 for prop in self.props:
-                    prop['value'] = getattr(self, str(prop['id']))
+                    try:
+                        prop['value'] = getattr(self, str(prop['id']))
+                    except:
+                        prop['value'] = ''
+
                     data['props'].append(prop);
 
 
         return data
 
+
+class RefImport(db.Model):
+    columns = JsonProperty()
+    blob_key = db.StringProperty()
+    root = db.StringProperty()
+    state = db.StringProperty(default = "init")
+    all_count = db.IntegerProperty(default = 0)
+    message = db.TextProperty()
+
+    created_at = db.DateTimeProperty(auto_now_add = True)
+
+    def counter(self):
+        return CachedCounter("%s_%s" % (str(self.key()), self.state))
+
+    def incr(self, amount = 1):
+        return self.counter().incr(amount)
+
+    @property
+    def count(self):
+        return self.counter().count
+
+
+
+class RefImportItem(Ref):
+    parent_name = db.StringProperty()
+    ref_import = db.ReferenceProperty(RefImport)
+    real_ref = db.ReferenceProperty(Ref)
+    state = db.StringProperty()
 
 class Event(db.Model):
     pass
@@ -411,3 +454,43 @@ def patch_appengine():
     apiproxy_stub_map.apiproxy.GetPreCallHooks().Append('preput',hook,'datastore_v3')
 
 patch_appengine()
+
+
+import datetime
+import time
+
+SIMPLE_TYPES = (int, long, float, bool, dict, basestring, list)
+
+def model_to_json(model):
+    output = {}
+
+    for key, prop in model.properties().iteritems():
+        value = getattr(model, key)
+
+        if value is None or isinstance(value, SIMPLE_TYPES):
+            output[key] = value
+        elif isinstance(value, datetime.date):
+            # Convert date/datetime to ms-since-epoch ("new Date()").
+            ms = time.mktime(value.utctimetuple()) * 1000
+            ms += getattr(value, 'microseconds', 0) / 1000
+            output[key] = int(ms)
+        elif isinstance(value, db.GeoPt):
+            output[key] = {'lat': value.lat, 'lon': value.lon}
+        elif isinstance(value, db.Model):
+            output[key] = ''#model_to_json(value)
+        else:
+            raise ValueError('cannot encode ' + repr(prop))
+
+    try:
+        output['key'] = str(model.key())
+        output['id'] = str(model.key())
+        output['num_id'] = str(model.key().id())
+    except:
+        pass
+
+    try:
+        output['count'] = model.count
+    except:
+        pass
+
+    return output

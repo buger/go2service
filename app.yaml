@@ -1,5 +1,5 @@
-application: go2serviceru
-version: beta
+application: go2service02
+version: beta-trees
 runtime: python
 api_version: 1
 
@@ -34,3 +34,7 @@ handlers:
 
 - url: /.*
   script: main_handler.py
+
+builtins:
+ - datastore_admin: on
+ - remote_api: on

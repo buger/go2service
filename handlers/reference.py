@@ -16,15 +16,18 @@ class RefTree(ServiceHandler):
         if not key:
             return self.error(404)
 
-        items = Ref.all()
+        import_id = self.request.get('import_id')
 
         if key == 'root':
-            items = items.filter("root =", True)
+            items = Ref.all().filter("root =", True)
         else:
-            key = db.Key(key)
-            items = items.filter("parents =", key)
+            if import_id:
+                items = RefImportItem.all().filter("ref_import =", db.Key(import_id)).filter("parent_name =", key)
+            else:
+                key = db.Key(key)
+                items = eval(key.kind()).all().filter("parents =", key)
 
-        items = [item.toJSON() for item in items]
+        items = [item.toJSON() for item in items.fetch(20)]
 
         self.render_json({ 'children': items })
 
@@ -118,7 +121,6 @@ class RefGet(ServiceHandler):
             if not ref.is_saved():
                 counter = CachedCounter('Ref')
                 ref.num_id = counter.incr()
-
 
             ref.put()
 

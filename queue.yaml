@@ -1,0 +1,9 @@
+queue:
+- name: default
+  rate: 20/s
+
+- name: merging
+  rate: 20/s
+
+- name: finalizing
+  rate: 20/s
