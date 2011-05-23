@@ -148,12 +148,16 @@ a:hover {
 /*----- Content -----*/
 #content {
 	margin: 0 7px;
-	min-height: 315px;
 	background-color: #ffffff;
 	text-align: left;
 }
 
 .banner{ margin:40px 0px 0px; text-align:center; width:100%; overflow:hidden; border:#FFF 0px solid; max-width:auto;}
+.banner .img {
+    background: url(/images/banner.jpg) center;
+    height: 283px;
+    width: 100%;
+}
 
 .title{ font-family:Arial, Helvetica, sans-serif; font-weight:bold; font-style:italic; color:#7dbc25; font-size:25px; margin-top:75px; padding-left:20px; border-bottom:#7dbc25 solid 1px;}
 
