@@ -27,7 +27,7 @@ class RefTree(ServiceHandler):
                 key = db.Key(key)
                 items = eval(key.kind()).all().filter("parents =", key)
 
-        items = [item.toJSON() for item in items.fetch(20)]
+        items = [item.toJSON() for item in items]
 
         self.render_json({ 'children': items })
 

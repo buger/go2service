@@ -1,3 +1,7 @@
+Backbone.View.prototype._super = Backbone.Model.prototype._super = function(funcName){
+    return this.constructor.__super__[funcName].apply(this, _.rest(arguments));
+}
+
 var ref_form;
 var ref_tree;
 
@@ -24,11 +28,14 @@ var TreeItemCollection = Backbone.Collection.extend({
     model: TreeItemModel
 });
 
-var tree_item_tmpl = "<div class='item'>"+
-                        "<div class='panel'><a href='#import/<%=id%>' class='import'>Импорт</a></div>"+
-                        "<a class='add' href='#add/<%=id%>'>(+)</a>"+
-                        "<a class='name'><%= name || 'Без названия' %></a>"+
-                     "</div>";
+var tree_item_tmpl = ["<div class='item'>",
+                        "<a class='config button'>▾</a>",
+                        "<div class='panel' style='display:none'>",
+                            "<a href='#add/<%=id%>'>Создать запись</a>",
+                            "<a href='#import/<%=id%>'>Импорт</a>",
+                        "</div>",
+                        "<a class='name'><%= name || 'Без названия' %></a>",
+                     "</div>"].join('');
 
 
 var TreeItemView = Backbone.View.extend({
@@ -36,7 +43,8 @@ var TreeItemView = Backbone.View.extend({
     tagName: "div",
 
     events: {
-        "click .name:first": "edit"
+        "click .name:first": "edit",
+        "click .config": "open_panel"
     },
 
     template: _.template(tree_item_tmpl),
@@ -55,6 +63,11 @@ var TreeItemView = Backbone.View.extend({
         if ($(this.el).hasClass('node-root')) {
             $(this.el).addClass('opened');
         }
+
+        var opened_items = store.get('tree-state');
+
+  //      if (opened_items && _.include(opened_items, this.model.id))
+//            $(this.el).addClass('opened');
 
         this.level = opts.level || 0;
 
@@ -78,52 +91,55 @@ var TreeItemView = Backbone.View.extend({
         return this;
     },
 
-    renderChildren: function() {        
+    renderChildren: function() {   
         var self = this;
         var container = $(this.el).parents('.wrapper').find('.level_'+(this.level+1));
 
-        try {
-            var scrollbar_api = $(this.el).parents('.wrapper').get(0).scrollbar_api;
-        } catch(e) {
-            console.log(this.el);
-        }
-
         if (!this.model.get('group')) {
             container.empty();
-
-            var previous_level = $(this.el).parents('.wrapper').find('.level_'+(this.level-1));
-
-            scrollbar_api.reinitialise();
-            scrollbar_api.scrollTo((self.level-2)*200);
+            
+            if (this.scroll != false) {
+                $(self.el).closest('.wrapper').animate({ scrollLeft: (self.level-1)*200});
+            }
         } else {
             if (!container[0]) {
                 container = $("<div class='level level_"+(this.level+1)+"'></div>");
-                scrollbar_api.getContentPane().append(container)
-
+                $(this.el).closest('.wrapper').append(container);
                 container = $(this.el).parents('.wrapper').find('.level_'+(this.level+1));
             }
 
             container.empty();
 
-            console.log('drawing childs', container)
-            
             this.model.get('children').each(function(el){
-                var view = new TreeItemView({ model: el, level: self.level+1, scroll: false});
+                var view = new TreeItemView({ model: el, level: self.level+1});
 
                 container.append(view.render().el);
             });
 
-            scrollbar_api.reinitialise();
-            scrollbar_api.scrollTo((self.level-1)*200);
+            $(self.el).closest('.wrapper')[0].view.updateLevelsHeader();
+
+
+            if (this.scroll != false) {
+                $(self.el).closest('.wrapper').animate({ scrollLeft: (self.level)*200});
+            }
         }
-        
+
+        this.scroll = true;
+    },
+    
+    open_panel: function(evt){
+        this.$('.config').toggleClass('opened');
+        this.$('.panel').toggle();
+
+        evt.stopPropagation();
     },
 
     open: function(render) {
         var self = this;
 
-        $(this.el).parents('.level').find('.opened').removeClass('opened');
-        $(this.el).parents('.level').nextAll().find('.opened').removeClass('opened');
+        $(this.el).parents('.level').find('div.opened').removeClass('opened');
+        $(this.el).parents('.level').nextAll().find('div.opened').removeClass('opened');
+
         $(this.el).addClass('opened');        
 
         if (!this.model.get('loaded')) {
@@ -131,18 +147,24 @@ var TreeItemView = Backbone.View.extend({
             
             this.model.fetch({silent: true, success: function(){ self.renderChildren()} });
         } else {
-            this.renderChildren();
-        }
+            setTimeout(function(){
+                self.renderChildren();
+            }, 0);
+        }  
         
         try {
             $(this.el).parents('.wrapper').get(0).view.updateLevelsHeader();
-        } catch(e) {}
+        } catch(e) {}      
     },
 
     edit: function() {
         var self = this;
 
-        if ($(this.el).parents('without-editing').length == 0) {
+        if ($(this.el).closest('.without-editing').length == 0) {
+            var opened_divs = $(this.el).closest('.wrapper').find('div.opened:visible');
+            var opened = _.map(opened_divs, function(el){ return el.view.model });
+            store.set('tree-state', _.map(opened, function(item){ return item.id }));
+            
             document.location.hash = "#edit/"+self.model.id;
         }
         
@@ -151,58 +173,90 @@ var TreeItemView = Backbone.View.extend({
 });
 
 var TreeView = Backbone.View.extend({
+    className: "wrapper",
+
     initialize: function() {
         _.bindAll(this, "render"); 
     },    
 
     render: function() {
+        for (var i=0; i<10; i++){
+            this.el.innerHTML += "<div class='level_"+i+" level'></div>";
+        }
+
         if (this.options['root']) {
-            var model = new TreeItemModel({ id: this.options['root'], name:'', group: true, import_id: this.options['import_id']});
+            var model = new TreeItemModel({ id: this.options['root'], name:'Корень', group: true, import_id: this.options['import_id']});
+            
+            $(this.el).addClass('without-editing');
         } else {
             var model = new TreeItemModel({ id: 'root', name:'Корень', group: true});
         }
+        
+        $(this.el).animate({ scrollLeft: 200 }, 0);
 
-        var view = new TreeItemView({ model: model, className: this.options['root'] ? "node-root without-editing" : "" });
-        $(this.el).html(view.render().el);        
+        var view = new TreeItemView({ model: model, className: "node-root", scroll: false});
+        
+        this.$('.level_0').html(view.render().el); 
 
-        this.el.scrollbar_api = $(this.el).jScrollPane({ autoReinitialize: true, horizontalDragMinWidth: 200, horizontalDragMaxWidth: 200, animateScroll: true }).data('jsp');
         this.el.view = this;
 
-        return this;
+        return this.el;        
     },
 
     levels_template: _.template([
         '<% _.each(items, function(item){ %>',
-        '<a href="#edit/<%=item.id%>"><%= item.get("name") %></a>',
+        '<a href="javascript:;" data-ref-id="<%=item.id%>"><%= item.get("name") %></a><span>▸</span>',
         '<% }); %>'
     ].join('')),
 
     updateLevelsHeader: function(){
         var self = this;
         var container = $(this.el).parent().find('.levels_header');
-        var opened = _.map(this.$('div.opened:visible'), function(el){ return el.view.model });
+        var opened_divs = this.$('div.opened:visible');
+        var opened = _.map(opened_divs, function(el){ return el.view.model });
+
+        this.$('div.active').removeClass('active');
+
+        $(_.last(opened_divs)).addClass('active');
 
         container.html(this.levels_template({ items: opened }));
 
-        container.find('a').bind('click', function() {
-            var id = _.last(this.href.split("/"));
-            var tree_item = self.$('.node-'+id);
+        container.find('span:last').hide();
+        container.find('a:last').css({ 'font-weight': 'bold' });
+
+        container.find('a').bind('click', function(evt) {            
+            var id = $(this).data('ref-id');
+
+            var tree_item = container.parent().find('.node-'+id+':visible');
 
             if (tree_item.get(0)) {
                 var view = tree_item.get(0).view;
-
-                var scrollbar_api = self.el.scrollbar_api;
-                scrollbar_api.scrollTo((view.level-1) * 200);
+                $(self.el).animate({ scrollLeft: (view.level) * 200});
+                
+                view.edit();
+                self.updateLevelsHeader();
             }
         });
-
     },
+    
+    action_bar_template: _.template([
+        "<a class='config button'>▾</a>",
+        "<div class='panel' style='display:none'>",
+            "<a role='add'>Создать запись</a>",
+            "<a role='import'>Импорт</a>",
+        "</div>"
+    ].join('')),
 
     destroy: function(id) {
         $('.node-'+id).each(function(idx, el){
             el.view.remove();
         });
     }
+});
+
+$(document).click(function(evt){
+    $('.item .panel:visible').hide();
+    $('.item .config.opened').removeClass('opened');
 });
 
 var RefModel = Backbone.Model.extend({
@@ -222,11 +276,20 @@ var FieldView = Backbone.View.extend({
 
     events: {
         "click .delete_field": "remove_field",
+        "click .configure_field": "configure_field",
         "change label input": "change_label",
-        "change span.field input": "change_value"
+        "change span.field input": "change_value",
+        "change span.field select": "change_value"
+    },
+
+    initialize: function(opts) {
+        if (opts)
+            this.parent_view = opts.parent_view;
     },
 
     render: function() {
+        $(this.el).empty();
+
         if (this.model.get('locked')) {
             var label_text = this.model.get('label') || ref_form_names[this.model.id];
         } else {
@@ -242,6 +305,9 @@ var FieldView = Backbone.View.extend({
         if (!this.model.get('locked')) {
             var delete_link = this.make("a", {class: 'delete_field'}, "✕");
             $(this.el).append(delete_link);
+            
+            var configure_link = this.make("a", {class: 'configure_field'}, "C");
+            $(this.el).append(configure_link);
         } else {
             if (this.model.get('inherited_from')) {
                 var info = this.make('span', {class: 'info', title:"Унаследовано от "+this.model.get('inherited_from')}, 'i');
@@ -257,6 +323,14 @@ var FieldView = Backbone.View.extend({
             ref_form.model.get('props').remove(this.model);
             this.remove();
         }
+    },
+    
+    config_fields: [],
+
+    configure_field: function(){
+        var html = new PropertyConfigForm({ model: this.model, config_fields: this.config_fields, parent_view: this }).render();
+
+        $.facebox(html);
     },
 
     change_value: function(){
@@ -282,6 +356,150 @@ var LinksFieldView = FieldView.extend({
         "<a href='#edit/<%=value[i][0]%>'><%=value[i][1]%></a>",
         "<% } %>"
         ].join('\n'))
+});
+
+var SelectFieldView = FieldView.extend({
+    config_fields: [
+        { type:"ref", label:"Справочник", id: "ref" }
+    ],
+
+    template: _.template([
+        "<select>",
+        "<% for (i in value) { %>",
+        "<option value='<%=value[i][0]%>'><%=value[i][1]%></option>",
+        "<% } %>",
+        "</select>"
+    ].join('\n')),
+});
+
+var RefFieldView = FieldView.extend({
+    ref_item: new RefModel(),    
+
+    events: {    
+        "click input[type='button']": "select_ref"
+    },    
+
+    template: _.template([
+        "<%=value%><input type='button' value='Выберите справочник'/>"
+    ].join('')),    
+
+    window_template: _.template([
+        "<input type='button' value='Выбрать и закрыть окно' disabled />",
+        "<br/>",
+        "<div class='tree'>",
+            "<div class='left'>",
+                "<div class='levels_header'></div>",
+                "<div class='wrapper'></div>",
+            "</div>",
+        "</div>"
+    ].join('')),
+
+    initialize: function(opts){
+        var self = this;
+
+        this.ref_item.set({id: this.model.get('value')});
+
+        this.ref_item.fetch({success: function(){
+            self.model.set({ value: self.ref_item.get('name') });       
+            self.render();
+        }});
+
+        this._super('initialize', opts);
+    },    
+
+    select_ref: function(){
+        var self = this;
+        var html = this.window_template();
+        var container = $("<div/>").html(html);
+
+        var tree = new TreeView({ root:'root', import_id:''}).render();
+        container.find('.left').append(tree);
+
+        $(tree).bind('click', function(){
+            container.find('input[type="button"]').removeAttr('disabled');
+        });
+        
+        container.find('input[type="button"]').bind('click', function(){
+            var selected = container.find('div.active')[0].view.model;            
+
+            var config = _.extend({}, self.parent_view.model.get('config'));
+            config[self.model.get('id')] = selected.id;
+
+            self.parent_view.model.set({'config': config});
+
+            $.facebox.close();
+        });
+
+        $.facebox(container);
+
+        $(document).bind('afterClose.facebox', function(){
+            $(document).unbind('afterClose.facebox');
+            self.parent_view.configure_field();
+        });
+    }
+});
+
+var BaseForm = Backbone.View.extend({
+    tag_name: "form",
+
+    getTag: function(prop) {
+        var tagTypes = {
+            'static': StaticFieldView,
+            'text': TextFieldView,
+            'links': LinksFieldView,
+            'select': SelectFieldView,
+            'ref': RefFieldView
+        };
+       
+        var tag = tagTypes[prop.get('type')];
+        if (!tag)
+            tag = StaticFieldView;
+
+        return new tag({model: prop});
+    }
+});
+
+
+var PropertyConfigForm = BaseForm.extend({
+    tagName: "form",
+    className: "form",
+
+    initialize: function(opts){
+        var self = this;
+        this.config_fields = new PropertyCollection();
+        this.parent_view = opts.parent_view;   
+
+        var values = _.extend({}, this.model.get('config'));
+
+        if (opts.config_fields) {
+            _.each(opts.config_fields, function(opt){
+                self.config_fields.add(new Property(_.extend(opt, {locked:true, value: values[opt.id]||""})));
+            });
+        }
+    },
+
+    render: function(){
+        var self = this;
+        var container = this.make("ol");
+
+        this.config_fields.each(function(prop) {
+            var tag = self.getTag(prop);
+            tag.parent_view = self.parent_view;  
+            
+            container.appendChild(tag.render().el);
+        });
+        
+        $(this.el).empty()
+            .append(container);
+
+        var save_button = this.make("input", { 
+            type: 'submit', 
+            value: "Сохранить"
+        });
+        $(this.el).append(save_button);
+
+        return this.el;
+    }
 });
 
 var Property = Backbone.Model.extend({
@@ -311,9 +529,8 @@ function update_tree_item(key){
     });
 }
 
-var RefForm = Backbone.View.extend({
-
-    tagName: 'form',
+var RefForm = BaseForm.extend({
+    tagName: "form",
 
     initialize: function() {
         _.bindAll(this, "edit", "render", "updateTree");
@@ -340,25 +557,12 @@ var RefForm = Backbone.View.extend({
         $(this.el).html('');
     },
 
-    getTag: function(model) {
-        var tagTypes = {
-            'static': StaticFieldView,
-            'text': TextFieldView,
-            'links': LinksFieldView
-        };
-       
-        var tag = tagTypes[model.get('type')];
-        if (!tag)
-            tag = StaticFieldView;
-
-        return new tag({model: model});
-    },
-
     updateTree: function(is_new){
         var self = this;
 
         $('.node-' + self.model.id).each(function(idx, el){
             el.view.model.set({ name: self.model.get('name') });
+            $(el).find('a.name').html(self.model.get('name'));
         });
         
         if (is_new) {            
@@ -373,12 +577,14 @@ var RefForm = Backbone.View.extend({
     },
 
     activateTree: function(){        
-        var tree_item = $('.node-' + this.model.id).addClass('opened');
+        try {
+            var tree_item = $('.node-' + this.model.id)[0].view.open();
+        } catch(e) {}
     },
 
     render: function() {
         var self = this;
-        
+
         var container = this.make("ol");
         
         if (!this.model.get('props'))
@@ -391,15 +597,19 @@ var RefForm = Backbone.View.extend({
         });
         
         var fieldset = this.make("fieldset", {}, container);
+        
+        this.el.empty();
+        this.el.action = "/service/ref/"+this.model.id;
+        this.el.method = "POST";
 
-        var form = this.make("form", {
-            action: "/service/ref/"+this.model.id,
-            method: "POST"
-        }, fieldset);
+        this.el.append(fieldset);
         
         var add_field = this.make("a", { class:'add_field', href:"javascript:;" }, "Добавить поле");
         var field_type = this.make("select", { class:"field_type" });
-        _({'text': 'Текстовое поле'}).each(function(value, key){
+        
+        var field_types = {'text': 'Текстовое поле', 'select': 'Справочник'};
+
+        _(field_types).each(function(value, key){
             field_type.appendChild(self.make("option", {value: key}, value));
         });
  
@@ -413,14 +623,14 @@ var RefForm = Backbone.View.extend({
         var add_field_container = this.make("div")
         add_field_container.appendChild(field_type)
         add_field_container.appendChild(add_field)
-
-        form.appendChild(add_field_container);
+        
+        this.el.append(add_field_container);
         
         var save_button = this.make("input", { 
             type: 'submit', 
             value: this.model.id == 'new' ? "Добавить" : "Сохранить"
         });
-        form.appendChild(save_button);
+        this.el.append(save_button);
 
         if (this.model.id != 'new') {
             var delete_link = this.make("a", {'class': "delete"}, "Удалить");            
@@ -431,10 +641,10 @@ var RefForm = Backbone.View.extend({
                     ref_workspace.saveLocation("");
                 }
             });
-            form.appendChild(delete_link);            
+            this.el.append(delete_link);            
         }
 
-        $(form).submit(function(){
+        $(this.el).submit(function(){
             var is_new = self.model.id == 'new';
 
             self.model.save({}, {
@@ -448,9 +658,9 @@ var RefForm = Backbone.View.extend({
             return false;
         });
         
-        $(this.el).html(form);
-
         this.activateTree();
+
+        return this.el;
     }
 });
 
@@ -477,27 +687,27 @@ var ImportForm = Backbone.View.extend({
             "<label>Выберите CSV файл для импорта</label>",
             "<input type='file' />",
             "<div class='progress' style='display:none'><div class='bar'></div></div>"
-        ].join('\n')),
+        ].join('')),
 
         'processing': _.template([
             "<h3>Обработка записей</h3>",
             "<div><%=message%></div>",
             "<div class='progress'><div class='bar' style='width:<%=count/all_count*100%>%'></div></div>",
             "<div class='new-import'>Остановить и начать новый импорт</div>"
-        ].join('\n')),
+        ].join('')),
 
         'error': _.template([
             "<h3>Ошибка импорта</h3>",
             "<div><%=message%></div>",
             "<div class='new-import'>Начать новый импорт</div>"
-        ].join('\n')),
+        ].join('')),
 
         'merging': _.template([
             "<h3>Анализ загруженных данных</h3>",
             "<div><%=message%></div>",
             "<div class='progress'><div class='bar' style='width:<%=count/all_count*100%>%'></div></div>",
             "<div class='new-import'>Остановить и начать новый импорт</div>"
-        ].join('\n')),
+        ].join('')),
 
         'preview': _.template([
             "<h3>Предварительный просмотр",
@@ -509,16 +719,19 @@ var ImportForm = Backbone.View.extend({
                 "<div class='unchanged'>Неизмененные</div>",
             "</div>",
             "<div class='tree'>",
-                "<ol>Загрузка...</ol>",
+                "<div class='left'>",
+                    "<div class='levels_header'></div>",
+                    "<div class='wrapper'></div>",
+                "</div>",
             "</div>",
             "<div class='new-import'>Остановить и начать новый импорт</div>"
-        ].join('\n')),
+        ].join('')),
 
         'finalizing': _.template([
             "<h3>Обновление справочника</h3>",
             "<div class='progress'><div class='bar' style='width:<%=count/all_count*100%>%'></div></div>",
             "<div class='new-import'>Остановить и начать новый импорт</div>"
-        ].join('\n')),
+        ].join('')),
     },
     
     initialize: function(){
@@ -680,7 +893,7 @@ var ImportForm = Backbone.View.extend({
 
 var tree = $('.tree');
 
-ref_form = new RefForm({ el: tree.find('div.form'), model: current_ref });
+ref_form = new RefForm({ el: tree.find('form.form'), model: current_ref });
 ref_tree = new TreeView({ el: tree.find('.wrapper')[0] }).render();
 
 var RefWorkspace = Backbone.Controller.extend({

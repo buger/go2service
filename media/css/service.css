@@ -5,6 +5,9 @@
 .ui-timepicker-div td { font-size: 90%; }
 .ui-datepicker-week-col { text-align: center; }
 
+body {
+}
+
 * {
     color: #333;
 }
@@ -233,38 +236,151 @@ ol ol {
 
 .tree .wrapper {
     width: 400px;
-    height: 600px;
-    overflow-x: auto;
+    max-height: 600px;
+    overflow-x: hidden;
     overflow-y: hidden;
     white-space: nowrap;    
     outline: 0;
-    padding-top: 20px;
+    margin-top: 5px;
 }
 
 .tree .wrapper .level {    
     width: 190px;
+    max-height: 600px;
     display: inline-block;
     overflow: hidden;
     vertical-align: top;
     padding-right: 10px;
+    padding-bottom: 60px;
+
+    overflow-y: auto;
 }
 
 .tree .levels_header {
     width: 400px;
+    height: 20px;
+    margin-top: 10px;
 }
 
 .tree .levels_header a {
     margin-right: 5px;
     display: inline-block;
-    max-width: 100px;
+    max-width: 80px;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: #333;
+    text-decoration: none;    
 }
 
-.tree .levels_header a:after {
-    content: "▸";
-    margin-left: 5px;
+.tree .levels_header a:hover {
+    text-decoration: underline;
+}
+
+.tree .levels_header span {
+    color: #666;
+    margin-right: 5px;
+}
+
+.tree .active {
+    font-weight: bold;
+}
+
+.tree .action_bar {
+    width: 400px;
+    position: relative;
+    margin-top: 10px;
+    z-index: 1;
+    display: none;
+}
+
+.tree .item > .config {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    background: white url(/images/service/config.png) 3px 3px no-repeat;    
+    text-align: right;
+    display: inline-block;
+    width: 28px;
+    height: 18px;
+    padding-right: 5px;
+    padding-top: 2px;
+    color: #999;
+    cursor: pointer;
+
+    z-index: 1;
+
+    display: none;
+}
+
+.tree .opened .config {
+    display: block;
+    background-color: #eee;
+}
+
+.tree .item:hover .config {
+    display: block;
+}
+
+.tree .item .config:hover {    
+    color: #333;
+}
+
+.tree .item > .config.opened {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    -webkit-background-clip: padding-box;
+    
+    border-bottom: 0px;
+    height: 21px;
+    
+    border: 1px solid #ccc;    
+
+    padding-top: 1px;
+    padding-right: 4px;
+
+    background: white url(/images/service/config.png) 3px 2px no-repeat;    
+
+    display: block;
+}
+
+.tree .item .panel {
+    position: absolute;
+    top: 23px;
+    right: 0px;
+    border: 1px solid #ccc;
+    background: white;
+
+    -webkit-border-radius: 5px;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius: 5px;
+    -moz-border-radius-topright: 0;
+    border-radius: 5px;
+    border-top-right-radius: 0;
+    
+    -webkit-background-clip: padding-box;
+
+    z-index: 2;
+}
+
+.tree .item .panel a {
+    display: block;
+    padding: 5px;
+    cursor: pointer;
+    font-weight: normal;
     text-decoration: none;
+}
+
+.tree .item .panel a:hover {    
+    background: #eee;
 }
 
 .tree > * {
@@ -276,24 +392,36 @@ ol ol {
     position: relative;
 
     padding: 2px 0px;    
+
+    padding-left: 20px;
+    
+    background: url(/images/service/blank.png) 4px 3px no-repeat;    
 }
 
 .tree .item .name {
-    text-decoration: underline;
     cursor: pointer;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 190px;
+    width: 150px;
     display: inline-block;
+    padding: 0 5px;
 }
 
-.tree .opened > div .name {
-    font-weight: bold;
+.tree .opened {
+    background-color: #eee;
+
+    border-radius: 5px;
 }
 
-.tree div.form {
+
+form.form {
     padding-left: 30px;
     width: 500px;
+}
+
+#facebox form.form {
+    padding:3px;
+    width: auto;
 }
 
 .tree .add {
@@ -303,79 +431,49 @@ ol ol {
     cursor: pointer;
 }
 
-.tree .node-root {
-    margin:0;
-    padding: 0;
-    display: none;
-}
-
-.tree .item .panel {
-    position: absolute;
-    background: #eee;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    top: 0px;
-    left: -15px;
-    display: none;
-    font-size: 13px;
-}
-
-.tree .group > .item .panel {
-    left: -30px;
-}
-
-.tree .active > .item .panel {
-    display: block;
-}
-
-.tree .items .item {
-    position: relative;
-    padding: 5px;
-}
-
-.tree .items div:hover .add {
-    visibility: visible;
-}
-
-.tree .items div a:hover {
-    cursor: pointer;
-    text-decoration: underline;
-}
-
 .tree .group > .item {
-    border-left: 3px solid #ccc;
+    background: url(/images/service/folder.png) 4px 2px no-repeat;    
 }
 
 
-.tree form label {
+form.form label {
     width: 150px;
     display: inline-block;
     margin-right: 30px;
 }
 
-.tree form li {
+form.form li {
     padding: 8px 0px;
+    white-space: nowrap;
 }
 
-.tree form input[type=text] {
+form.form input[type=text] {
     border: 1px solid #ccc;
     padding: 2px;
     width: 300px;
 }
 
-.tree form input[type=submit] {
+form.form span.field {
+  white-space: nowrap;
+}
+
+input[type=button] {
+  padding: 5px 10px;
+}
+
+form.form input[type=submit] {
     margin-top: 20px;
     padding: 5px 10px;
 }
 
-.tree form .delete {
+form.form .delete {
     margin-left: 10px;
     color: red;
     text-decoration: none;
     cursor: pointer;
 }
 
-.tree form .add_field {
+form.form .add_field {
     margin-left: 10px;    
 }
 
@@ -383,32 +481,50 @@ ol ol {
     width: auto !important;
 }
 
-.tree li.state-new > div a.name, .legend .new {
+.legend .new {
     background: #77CCA4;
     border-radius: 5px;
     padding: 3px;
     color: white;
 }
 
-.tree li.state-unchanged > div a.name, .legend .unchanged {
+.tree div.state-new a.name {
+    color: #77CCA4;
+}
+
+.legend .unchanged {
     background: #F0F0F0;
     border-radius: 5px;
     padding: 3px;
     color: #333;
 }
 
-.tree li.state-changed > div a.name, .legend .changed {
+.tree div.state-unchanged a.name {
+    color: #F0F0F0;
+}
+
+.legend .changed {
     background: #2A8FBD;
     border-radius: 5px;
     padding: 3px;
     color: white;
 }
 
-.tree .without-editing a.name {    
-    text-decoration: none;
-    cursor: default;
+.tree div.state-changed a.name {
+    color: #2A8FBD;
 }
 
+.tree .without-editing a.name {    
+    text-decoration: none;
+}
+
+.tree .without-editing a.config { 
+    display: none;
+}
+
+.tree .without-editing .item:hover a.config { 
+    display: none;
+}
 
 .tree .without-editing li div .add {
     display: none;
@@ -469,11 +585,19 @@ ol ol {
     margin-left: 14px;
 }
 
+
 .tree form .delete_field {
     color: red;
     margin-left: 10px;
     cursor: pointer;
 }
+
+.tree form .configure_field {
+    color: blue;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
 
 .import-form .progress {
     border-radius: 5px;
