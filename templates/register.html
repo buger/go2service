@@ -1,0 +1,54 @@
+{% extends "./layout.html" %}
+{% block menu %}
+<td width="20%" align="center"><a href="news.html">Новости</a></td>
+<td width="20%" align="center"><a href="ourwork.html">Наша работа</a></td>
+<td width="20%" align="center"><a href="company.html">Компания</a></td>
+<td width="20%" align="center" class="active">
+    <a href="/my">Оставить заявку</a>
+    {% if session.logged %}
+    <a href="/logout" class="login">{{session.logged}}<br/><span>Выход</span></a>
+    {% else %}
+    <a href="/login" class="login"><span>Вход с паролем</span></a>
+    {% endif %}
+    <div class="login" style="display: none">
+    </div>
+</td>
+{% endblock %}
+{% block cvalification %}
+{% endblock %}
+{% block content %}
+<div class="content_box">
+    <div class="form register">
+        <h1>Регистрация в системе</h1>
+        <form action="/register" method="POST">                                
+            <ol>
+                <li>
+                    <label>Адрес электронной почты</label>
+                    <input type="text" value="{{session.email}}" name="email" />
+                </li>
+                <li>
+                    <label>Пароль</label>
+                    <input type="text" name="password" />
+                </li>
+                <li class="buttons">
+                    <input type="submit" value="Зарегистрироваться" />
+                    <a href="/login">Уже зарегистрированы?</a>
+                </li>
+            </ol>
+        </form>
+        
+        <div class="about">
+            <h2>Зачем нужна регистрация?</h2>
+            <p>Вы получаете личный кабинет, где можно смотреть статус всех заявок.</p>
+            <p>Возможность быстрого заполнения заявки.</p>
+        </div>
+    </div>
+</div>
+<script>
+    {% if session.email %}
+        $('.form.register .password').focus();
+    {% else %}
+        $('.form.register .email').focus();
+    {% endif %}
+</script>
+{% endblock %}

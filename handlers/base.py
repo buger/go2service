@@ -9,6 +9,7 @@ import simplejson as json
 
 from lib.models import *
 from lib.counter import *
+from lib.lilcookies import *
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -18,6 +19,46 @@ from google.appengine.api import users
 from google.appengine.api import mail
 
 template.register_template_library('with_tag')
+
+
+import copy
+
+cookie_secret = 'af8559a6788b1ee9fbe34307bc1ac39caf8559a6788b1ee9fbe34307bc1ac39c'
+
+class Session:
+    def __init__(self, handler):
+        self.cookieutil = LilCookies(handler, cookie_secret)
+
+    @property
+    def data(self):
+        try:
+            return self._data
+        except:
+            try:
+                self._data = json.loads(self.cookieutil.get_secure_cookie('data'))
+            except:
+                self._data = {}
+
+            return self._data
+
+    def __getitem__(self, name):
+        try:
+            return self.data[name]
+        except:
+            return ''
+
+    def __setitem__(self, name, value):
+        self.data[name] = value
+        self.cookieutil.set_secure_cookie('data', json.dumps(self.data))
+
+        return value
+
+    def __delitem__(self, name):
+        del self.data[name]
+
+        self.cookieutil.set_secure_cookie('data', json.dumps(self.data))
+
+
 
 class AppHandler(webapp.RequestHandler):
     def guess_lang(self):
@@ -46,10 +87,17 @@ class AppHandler(webapp.RequestHandler):
 
         data['lang'] = os.environ['i18n_lang']
 
+        data['session'] = self.session
+
         html = template.render(path, data)
 
         if not data.has_key('dont_render'):
             self.response.out.write(html)
+
+        try:
+            del self.session['flash']
+        except:
+            pass
 
         return html
 
@@ -60,6 +108,22 @@ class AppHandler(webapp.RequestHandler):
 
     def render_text(self, string):
         self.response.out.write(string)
+
+    # Example:
+    #   self.session['data']
+    #   self.session['data'] = 'adasdasd'
+    #   del self.session['data']
+    #
+    # Using Flash:
+    #   self.session['flash'] = 'asdasd']
+    #   self.session['flash'] <- After getting it deletes 'flash' key
+    @property
+    def session(self):
+        try:
+            return self._session
+        except AttributeError:
+            self._session = Session(self)
+            return self._session
 
 
 def throw(obj):

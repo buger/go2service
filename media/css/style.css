@@ -363,3 +363,178 @@ margin-bottom:100px
     font-size: 11px;
     color: #555;
 }
+
+.form {
+    width: 700px;
+    margin: 0 auto;
+    font-size: 16px;
+    font-family: Arial;
+}
+
+.form h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form ol {
+    list-style: none;
+}
+
+.form li {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form label {
+    display: block;
+    width: 350px;
+    left: 0px;    
+
+    font-size: 16px;
+    line-height: 1.6em;
+    font-weight: bold;
+    color: #444;
+}
+
+.form .checkbox {
+    padding: 0px;
+}
+
+.form .checkbox label {
+    width: 600px;
+    left: 0px;
+    display: inline;
+}
+
+.form .checkbox a {
+    display: inline;
+    font-size: 18px;
+}
+
+.form .checkbox input[type='checkbox'] {
+    margin-right: 10px;
+}
+
+.form input[type='text'], .form textarea {
+    border: 1px solid #ccc;
+
+    padding:5px;
+    border:2px solid #ddd;
+    font-size:1.2em;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:inset 0 2px 2px rgba(0,0,0,.1);
+    -webkit-box-shadow:inset 0 2px 2px rgba(0,0,0,.1);
+    box-shadow:inset 0 2px 2px rgba(0,0,0,.1);
+    width: 400px;
+
+    border-radius: 5px;
+
+    outline: none;
+}
+
+.form input[type='text']:focus, .form textarea:focus {
+    border-color: #F39F28;
+}
+
+.form textarea {
+    height: 200px;
+    width: 600px;
+    font-family: Arial;
+}
+
+.form input[type="submit"] {
+    -moz-border-radius:5px;
+    border-radius: 5px;
+
+    padding: 10px 20px;
+
+    border: 1px solid #999;
+
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+.form .buttons a {
+    display: inline;
+    font-weight: normal;
+    margin-left: 45px;
+    font-size: 14px;
+}
+
+.form input[type="submit"]:hover {
+    border-color: #333;
+}
+
+#menu a.login {
+    position: absolute;
+    top: 20px;
+    padding: 0;
+    line-height: 180%;
+    font-weight: normal;
+    width: 100%;
+    text-align: center;
+    color: #333;
+}
+
+#menu a.login span {
+    color:#05C;
+    border-bottom: dashed 1px #05C;
+}
+
+#menu a.login:hover {
+    background: 0;
+}
+
+#menu a.login:hover span {
+    color: red;  
+    border-color: red;
+}
+
+#menu .active {
+    position: relative;    
+}
+
+.form.register {
+    width: 960px;
+    position: relative;
+    margin-top: 50px;
+}
+
+.form.register .about {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 500px;
+}
+
+.form.register .about h2 {
+    margin-bottom: 20px;
+}
+
+.form.register .about p {
+    margin-top: 10px;
+}
+
+.form.register h1.message {
+    position: absolute;
+    top: -60px;
+    left: 0px;
+    color: #333;
+}
+
+#flash_message {
+    position: absolute;
+    top: 0px;
+    left: 40%;
+    min-width: 200px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: #eee;    
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 18px;
+}

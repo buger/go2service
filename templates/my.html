@@ -1,0 +1,76 @@
+{% extends "./layout.html" %}
+{% block menu %}
+<td width="20%" align="center"><a href="news.html">Новости</a></td>
+<td width="20%" align="center"><a href="ourwork.html">Наша работа</a></td>
+<td width="20%" align="center"><a href="company.html">Компания</a></td>
+<td width="20%" align="center" class="active">
+    <a href="/my">Оставить заявку</a>
+    {% if session.logged %}
+    <a href="/logout" class="login">{{session.logged}}<br/><span>Выход</span></a>
+    {% else %}
+    <a href="/login" class="login"><span>Вход с паролем</span></a>
+    {% endif %}
+    <div class="login">
+    </div>
+</td>
+{% endblock %}
+{% block cvalification %}
+{% endblock %}
+{% block content %}
+<div class="content_box">
+    <div class="form">
+        <h1>Заявка на обслуживание оборудования</h1>
+        <form action="/my" method="POST">
+            <ol>
+                <li>
+                    <label>Юридическое лицо</label>
+                    <input name="company" type="text" value="{{session.company}}"/> 
+                </li>
+                <li>
+                    <label>Объект</label>
+                    <input name="object" type="text"/> 
+                </li>
+                <li>
+                    <label>Адрес места эксплуатации</label>
+                    <input name="address" type="text"/> 
+                </li>
+                <li>
+                    <label>Контактное лицо</label>
+                    <input name="contact" type="text" value="{{session.contact}}"/> 
+                </li>
+                <li>
+                    <label>Телефонный номер контактного лица</label>
+                    <input name="phone" type="text" value="{{session.phone}}"/> 
+                </li>                   
+                <li>
+                    <label>Адрес электронной почты</label>
+                    <input name="email" type="text" value="{{session.email}}"/> 
+                </li>                   
+                <li>
+                    <label>Описание оборудования</label>
+                    <textarea name="description"></textarea>
+                </li>                   
+                <li>
+                    <label>Текст заявки</label>
+                    <textarea name="text"></textarea>
+                </li>                         
+                <li class="checkbox" style="margin-top: 30px">
+                    <label>
+                        <input name="company" type="checkbox" /> 
+                        Ознакомлен с <a href="#">документом-офертой</a>
+                    </label>
+                </li>                 
+                <li class="checkbox">
+                    <label>
+                        <input name="company" type="checkbox" /> 
+                        Ознакомлен с <a href="#">тарифами</a>
+                    </label>                    
+                </li>                                    
+                <li class="buttons">
+                    <input type="submit" value="Отправить заявку" />
+                </li>
+            </ol>
+        </form>
+    </div>
+</div>
+{% endblock %}

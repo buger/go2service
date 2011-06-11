@@ -84,3 +84,109 @@ class ServiceActivateUser(ServiceHandler):
         self.redirect('/service/users')
 
 route('/service/user/activate/:user_id', ServiceActivateUser)
+
+
+class MyService(AppHandler):
+    def get(self):
+        self.render_template("my.html")
+
+    def post(self):
+        title = u"Заявка не ремонт оборудования: %s" % self.request.get('company')
+        body = u"""
+            Юридическое лицо: %s
+            Объект: %s
+            Адрес места эксплуатации: %s
+            Контактное лицо: %s
+            Телефонный номер контактного лица: %s
+            Адрес электронной почты: %s
+            Описание оборудования: %s
+            Текст заявки: %s
+        """ % (self.request.get('company'),
+               self.request.get('object'),
+               self.request.get('address'),
+               self.request.get('contact'),
+               self.request.get('phone'),
+               self.request.get('email'),
+               self.request.get('description'),
+               self.request.get('text'))
+
+        mail.send_mail("vadim@go2service.ru", "srv@go2service.ru", title, body)
+
+        self.session['flash'] = u"Ваша заявка принята!"
+        self.session['email'] = self.request.get('email')
+        self.session['company'] = self.request.get('company')
+        self.session['contact'] = self.request.get('contact')
+        self.session['phone'] = self.request.get('phone')
+
+        if self.session['logged']:
+            self.redirect('/my')
+        else:
+            self.redirect('/register')
+
+
+route('/my', MyService)
+
+class Register(AppHandler):
+    def show_error(self, message):
+            self.session['flash'] = message
+            self.redirect('/register')
+
+    def get(self):
+        self.render_template("register.html")
+
+    def post(self):
+        if UserModel.gql("WHERE user = USER('%s')" % self.request.get('email')).get():
+            return self.show_error(u"Такой пользователь уже существует!")
+
+        user = UserModel()
+        user.set_password(self.request.get('password'))
+        user.set_email(self.request.get('email'))
+        user.put()
+
+        mail.send_mail("vadim@go2service.ru", self.request.get('email'), u"Регистрация на ксервису.рф", u"Вы зарегистрировались на сайте http://go2service.ru\nДанные для входа:\nАдрес электронной почты: %s\nПароль: %s" % (self.request.get('email'), self.request.get('password')))
+
+        self.session['logged'] = self.request.get('email')
+        self.session['email'] = self.request.get('email')
+
+        self.redirect('/my')
+
+
+route('/register', Register)
+
+
+class Logout(AppHandler):
+    def get(self):
+        try:
+            del self.session['logged']
+        except:
+            pass
+
+        self.redirect('/my')
+
+route('/logout', Logout)
+
+
+class Login(AppHandler):
+    def show_error(self, message):
+            self.session['flash'] = message
+            self.redirect('/login')
+
+    def get(self):
+        self.render_template("login.html")
+
+    def post(self):
+        user = UserModel.gql("WHERE user = USER('%s')" % self.request.get('email')).get()
+
+        if user:
+            if user.check_password(self.request.get('password')):
+                self.session['logged'] = self.request.get('email')
+                self.session['email'] = self.request.get('email')
+
+                self.redirect('/my')
+            else:
+                return self.show_error(u"Неправильный пароль!")
+        else:
+            return self.show_error(u"Пользователь не найден!")
+
+
+route('/login', Login)

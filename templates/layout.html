@@ -8,6 +8,10 @@
 </head>
 <body>
     <div id="wrapper">
+        {% if session.flash %}
+        <div id="flash_message">{{session.flash}}</div>
+        {% endif %}            
+
         <div id="header">
             <div id="top">Позвоните нам на (495) 960-2043 или <a href="http://itwarranty.m.octopusline.net/widgets/callme_new.php?service_instance_id=281">мы позвоним сами</a></div>
             <div id="logo">
@@ -27,6 +31,7 @@
                     <td width="20%" align="center" class="news"><a href="news.html">Новости</a></td>
                     <td width="20%" align="center" class="ourwork"><a href="ourwork.html">Наша работа</a></td>
                     <td width="20%" align="center" class="company"><a href="company.html">Компания</a></td>
+                    <td width="20%" align="center" class="my"><a href="/my">Оставить заявку</a></td>
                     {% endblock %}
                 </tr>	
             </table>
@@ -36,7 +41,9 @@
             {% block banner %}{% endblock %} 
         </div>
         <div id="clear"></div>
-        {% include "./inc/cvalification.html" %}
+        {% block cvalification %}
+            {% include "./inc/cvalification.html" %}
+        {% endblock %}
         <div id="clear"></div>
         <div id="content">
             {% block content %}{% endblock %}
@@ -51,6 +58,10 @@
 	    <div id="clear"></div>
         {% include "./inc/footer.html" %}
     </div>
+
+    <script>
+        $('#flash_message').delay(3000).fadeOut(1000);
+    </script>
 </body>
 </html>
 

@@ -8,6 +8,8 @@ import simplejson as json
 
 from lib.counter import CachedCounter
 
+import hashlib
+
 
 class JsonProperty(db.Property):
     data_type = db.Text
@@ -152,7 +154,6 @@ class Contact(polymodel.PolyModel):
 class Company(Contact):
     pass
 
-
 class Person(Contact):
     pass
 
@@ -169,6 +170,7 @@ class UserModel(Contact):
     user = db.UserProperty()
     verified = db.BooleanProperty(default = False)
     roles = db.ListProperty(int)
+    password_hash = db.StringProperty()
 
     def is_admin(self):
         return self.roles.count(UserModel.ADMIN_ROLE) == 1
@@ -183,6 +185,15 @@ class UserModel(Contact):
             str_arr.append(UserModel.ROLE_NAMES[role])
 
         return ','.join(str_arr)
+
+    def set_password(self, password):
+        self.password_hash = hashlib.sha224(password).hexdigest()
+
+    def check_password(self, password):
+        return self.password_hash == hashlib.sha224(password).hexdigest()
+
+    def set_email(self, email):
+        self.user = users.User(email)
 
 
 
