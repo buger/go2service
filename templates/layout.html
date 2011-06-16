@@ -43,10 +43,10 @@
             <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                     {% block menu %}
-                    <td width="20%" align="center" class="news"><a href="news.html">Новости</a></td>
-                    <td width="20%" align="center" class="ourwork"><a href="ourwork.html">Наша работа</a></td>
-                    <td width="20%" align="center" class="company"><a href="company.html">Компания</a></td>
-                    <td width="20%" align="center" class="my"><a href="/my">Оставить заявку</a></td>
+                    <td width="20%" class="news"><a href="news.html">Новости</a></td>
+                    <td width="20%" class="ourwork"><a href="ourwork.html">Наша работа</a></td>
+                    <td width="20%" class="company"><a href="company.html">Компания</a></td>
+                    <td width="20%" class="my"><a href="/my">Оставить заявку</a></td>
                     {% endblock %}
                 </tr>	
             </table>
@@ -76,6 +76,28 @@
 
     <script>
         $('#flash_message').delay(3000).fadeOut(1000);
+
+        $('#menu .login').bind('click', function(evt){
+            $(this).next().toggle();
+
+            evt.stopPropagation();
+        });
+
+        $(document).bind('click', function(evt){
+            if ($(evt.target).closest('.login_form').length == 0)            
+                $('#menu .login_form').hide();
+        });
+
+        $('.form.issue input[type="checkbox"]').bind('change', function(){
+            var form = $(this.form);
+
+            console.log('asd');
+            if (form.find('input[type="checkbox"]:checked').length == 2) {
+                form.find('input[type="submit"]').removeAttr('disabled');
+            } else {
+                form.find('input[type="submit"]').attr('disabled', 'disabled');
+            }
+        });
     </script>
 </body>
 </html>

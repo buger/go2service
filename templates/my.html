@@ -1,30 +1,46 @@
 {% extends "./layout.html" %}
 {% block menu %}
-<td width="20%" align="center"><a href="news.html">Новости</a></td>
-<td width="20%" align="center"><a href="ourwork.html">Наша работа</a></td>
-<td width="20%" align="center"><a href="company.html">Компания</a></td>
-<td width="20%" align="center" class="active">
+<td width="20%"><a href="news.html">Новости</a></td>
+<td width="20%"><a href="ourwork.html">Наша работа</a></td>
+<td width="20%"><a href="company.html">Компания</a></td>
+<td width="20%" class="active">
     <a href="/my">Оставить заявку</a>
     {% if session.logged %}
-    <a href="/logout" class="login">{{session.logged}}<br/><span>Выход</span></a>
+    <a href="/logout" class="login">{{session.logged}}&nbsp;<span>Выход</span></a>
     {% else %}
-    <a href="/login" class="login"><span>Вход с паролем</span></a>
-    {% endif %}
-    <div class="login">
+    <a href="javascript:;" class="login"><span>Вход с паролем</span></a>
+    <div class="login_form form" style="display: none">
+        <form action="/login" method="POST">
+            <ol>
+                <li>
+                    <label>Эл. почта</label>
+                    <input name="email" type="text" value="{{session.email}}" />
+                </li>
+                <li>
+                    <label>Пароль</label>
+                    <input name="password" type="text" value="" />
+                </li>
+                <li class="buttons">
+                    <input type="submit" value="Войти" />                
+                    <a href="/login" class="register">Регистрация</a>
+                </li>
+            </ol>
+        </form>
     </div>
+    {% endif %}
 </td>
 {% endblock %}
 {% block cvalification %}
 {% endblock %}
 {% block content %}
 <div class="content_box">
-    <div class="form">
+    <div class="form issue">
         <h1>Заявка на обслуживание оборудования</h1>
         <form action="/my" method="POST">
             <ol>
                 <li>
                     <label>Юридическое лицо</label>
-                    <input name="company" type="text" value="{{session.company}}"/> 
+                    <input name="company" type="text" value="{{data.company}}"/> 
                 </li>
                 <li>
                     <label>Объект</label>
@@ -36,15 +52,15 @@
                 </li>
                 <li>
                     <label>Контактное лицо</label>
-                    <input name="contact" type="text" value="{{session.contact}}"/> 
+                    <input name="contact" type="text" value="{{data.contact}}"/> 
                 </li>
                 <li>
                     <label>Телефонный номер контактного лица</label>
-                    <input name="phone" type="text" value="{{session.phone}}"/> 
+                    <input name="phone" type="text" value="{{data.phone}}"/> 
                 </li>                   
                 <li>
                     <label>Адрес электронной почты</label>
-                    <input name="email" type="text" value="{{session.email}}"/> 
+                    <input name="email" type="text" value="{{data.email}}"/> 
                 </li>                   
                 <li>
                     <label>Описание оборудования</label>
@@ -67,7 +83,7 @@
                     </label>                    
                 </li>                                    
                 <li class="buttons">
-                    <input type="submit" value="Отправить заявку" />
+                    <input type="submit" value="Отправить заявку" disabled="disabled"/>
                 </li>
             </ol>
         </form>

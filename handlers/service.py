@@ -88,7 +88,20 @@ route('/service/user/activate/:user_id', ServiceActivateUser)
 
 class MyService(AppHandler):
     def get(self):
-        self.render_template("my.html")
+        if self.session['logged']:
+            data = {
+                'company': self.session['company'],
+                'object': self.session['object'],
+                'address': self.session['address'],
+                'contact': self.session['contact'],
+                'phone': self.session['phone'],
+                'email': self.session['email']
+            }
+        else:
+            data = {}
+
+
+        self.render_template("my.html", {'data': data} )
 
     def post(self):
         title = u"Заявка не ремонт оборудования: %s" % self.request.get('company')

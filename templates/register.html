@@ -1,17 +1,33 @@
 {% extends "./layout.html" %}
 {% block menu %}
-<td width="20%" align="center"><a href="news.html">Новости</a></td>
-<td width="20%" align="center"><a href="ourwork.html">Наша работа</a></td>
-<td width="20%" align="center"><a href="company.html">Компания</a></td>
-<td width="20%" align="center" class="active">
+<td width="20%"><a href="news.html">Новости</a></td>
+<td width="20%"><a href="ourwork.html">Наша работа</a></td>
+<td width="20%"><a href="company.html">Компания</a></td>
+<td width="20%" class="active">
     <a href="/my">Оставить заявку</a>
     {% if session.logged %}
-    <a href="/logout" class="login">{{session.logged}}<br/><span>Выход</span></a>
+    <a href="/logout" class="login">{{session.logged}}&nbsp;<span>Выход</span></a>
     {% else %}
-    <a href="/login" class="login"><span>Вход с паролем</span></a>
-    {% endif %}
-    <div class="login" style="display: none">
+    <a href="javascript:;" class="login"><span>Вход с паролем</span></a>
+    <div class="login_form form" style="display: none">
+        <form action="/login" method="POST">
+            <ol>
+                <li>
+                    <label>Эл. почта</label>
+                    <input name="email" type="text" value="{{session.email}}" />
+                </li>
+                <li>
+                    <label>Пароль</label>
+                    <input name="password" type="text" value="" />
+                </li>
+                <li class="buttons">
+                    <input type="submit" value="Войти" />                
+                    <a href="/login" class="register">Регистрация</a>
+                </li>
+            </ol>
+        </form>
     </div>
+    {% endif %}
 </td>
 {% endblock %}
 {% block cvalification %}
