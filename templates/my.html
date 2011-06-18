@@ -4,6 +4,7 @@
 <td width="20%"><a href="ourwork.html">Наша работа</a></td>
 <td width="20%"><a href="company.html">Компания</a></td>
 <td width="20%" class="active">
+    <div style="position: relative">
     <a href="/my">Оставить заявку</a>
     {% if session.logged %}
     <a href="/logout" class="login">{{session.logged}}&nbsp;<span>Выход</span></a>
@@ -22,12 +23,13 @@
                 </li>
                 <li class="buttons">
                     <input type="submit" value="Войти" />                
-                    <a href="/login" class="register">Регистрация</a>
+                    <a href="/register" class="register">Регистрация</a>
                 </li>
             </ol>
         </form>
     </div>
     {% endif %}
+    </div>
 </td>
 {% endblock %}
 {% block cvalification %}
