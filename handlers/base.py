@@ -19,7 +19,7 @@ from google.appengine.api import users
 from google.appengine.api import mail
 
 template.register_template_library('with_tag')
-
+template.register_template_library('media_tag')
 
 import copy
 

@@ -1,4 +1,5 @@
 from handlers.base import *
+import os
 
 class StaticPage(AppHandler):
     def get(self, template = "index.html"):

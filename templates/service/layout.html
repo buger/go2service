@@ -4,28 +4,30 @@
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css">
         <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/cupertino/jquery-ui.css">
-	    <link rel='stylesheet' type='text/css' href='/css/service.css?1'>
-        <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css">
-        <link rel="stylesheet" type="text/css" href="/css/facebox.css">
-        <link rel="stylesheet" type="text/css" href="/css/jquery.jscrollpane.css">
+
+        {{ "service"|stylesheet }}
+        {{ "ui.jqgrid"|stylesheet }}
+        {{ "facebox"|stylesheet }}
+        {{ "jquery.jscrollpane"|stylesheet }}
     </head>
     <title>{% block title %}Service{% endblock %}</title>
     <body>
         {% block body %}{% endblock %}
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="/js/jquery-ui-i18n.min.js"></script>
-        <script type="text/javascript" src="/js/jquery-ui-timepicker-addon.js"></script>
-        <script type="text/javascript" src="/js/grid.locale-ru.js"></script>
-        <script type="text/javascript" src="/js/jquery.jqGrid.min.js"></script>
-        <script type="text/javascript" src="/js/jquery.form.js"></script>
-        <script type="text/javascript" src="/js/jquery.sap.min.js"></script>
-        <script type="text/javascript" src="/js/store.min.js"></script>
-        <script type="text/javascript" src="/js/underscore-min.js"></script>
-        <script type="text/javascript" src="/js/backbone-min.js"></script>
-        <script type="text/javascript" src="/js/facebox.js"></script>
-        <script type="text/javascript" src="/js/jquery.jscrollpane.min.js?5"></script>        
-        <script type="text/javascript" src="/js/application.js"></script>
-        <script type="text/javascript" src="/js/reference.js?7"></script>
+
+        {{ "jquery-ui-i18n.min"|javascript }}
+        {{ "jquery-ui-timepicker-addon"|javascript }}
+        {{ "grid.locale-ru"|javascript }}
+        {{ "jquery.jqGrid.min"|javascript }}
+        {{ "jquery.form"|javascript }}
+        {{ "jquery.sap.min"|javascript }}
+        {{ "store.min"|javascript }}
+        {{ "underscore-min"|javascript }}
+        {{ "backbone-min"|javascript }}
+        {{ "facebox"|javascript }}
+        {{ "jquery.jscrollpane.min"|javascript }}        
+        {{ "application"|javascript }}
+        {{ "reference"|javascript }}
     </body>
 </html>
