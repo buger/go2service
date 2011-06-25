@@ -359,17 +359,38 @@ var LinksFieldView = FieldView.extend({
 });
 
 var SelectFieldView = FieldView.extend({
+    ref_tree_item: new TreeItemModel(),    
+
     config_fields: [
         { type:"ref", label:"Справочник", id: "ref" }
     ],
 
     template: _.template([
         "<select>",
-        "<% for (i in value) { %>",
-        "<option value='<%=value[i][0]%>'><%=value[i][1]%></option>",
+        "<% for (i in options) { %>",
+        "<option value='<%=options[i][0]%>'><%=options[i][1]%></option>",
         "<% } %>",
         "</select>"
     ].join('\n')),
+
+    initialize: function(opts){
+        var self = this;
+
+        this.model.set({'options': [['','Загрузка...']]});
+
+        this.ref_tree_item.set({'id':this.model.get('config')['ref']});
+        
+        this.ref_tree_item.fetch({
+            success: function(){
+                var options = self.ref_tree_item.get('children').map(function(ref){ return [ref.id, ref.get('name')] });
+                self.model.set({ 'options': options }, { silent:true });
+                self.render();
+                self.model.unset('options');
+            }
+        });
+
+        this._super('initialize', opts);
+    }
 });
 
 var RefFieldView = FieldView.extend({
@@ -380,8 +401,8 @@ var RefFieldView = FieldView.extend({
     },    
 
     template: _.template([
-        "<%=value%><input type='button' value='Выберите справочник'/>"
-    ].join('')),    
+        "<%=view%><input type='button' value='Выберите справочник'/>"
+    ].join('')),   
 
     window_template: _.template([
         "<input type='button' value='Выбрать и закрыть окно' disabled />",
@@ -396,13 +417,16 @@ var RefFieldView = FieldView.extend({
 
     initialize: function(opts){
         var self = this;
-
+        this.model.set({ view: 'Загрузка...' }, {silent: true});
+        
         this.ref_item.set({id: this.model.get('value')});
 
-        this.ref_item.fetch({success: function(){
-            self.model.set({ value: self.ref_item.get('name') });       
-            self.render();
-        }});
+        this.ref_item.fetch({
+            success: function(){
+                self.model.set({ view: self.ref_item.get('name') }, {silent:true});       
+                self.render();
+            }
+        });
 
         this._super('initialize', opts);
     },    
@@ -426,6 +450,8 @@ var RefFieldView = FieldView.extend({
             config[self.model.get('id')] = selected.id;
 
             self.parent_view.model.set({'config': config});
+
+            self.model.change();
 
             $.facebox.close();
         });
@@ -455,7 +481,7 @@ var BaseForm = Backbone.View.extend({
         if (!tag)
             tag = StaticFieldView;
 
-        return new tag({model: prop});
+        return new tag({model: prop, parent_view: this});
     }
 });
 
@@ -466,8 +492,10 @@ var PropertyConfigForm = BaseForm.extend({
 
     initialize: function(opts){
         var self = this;
+        _.bindAll(this, "property_changed");
+
         this.config_fields = new PropertyCollection();
-        this.parent_view = opts.parent_view;   
+        this.parent_view = opts.parent_view;  
 
         var values = _.extend({}, this.model.get('config'));
 
@@ -476,6 +504,8 @@ var PropertyConfigForm = BaseForm.extend({
                 self.config_fields.add(new Property(_.extend(opt, {locked:true, value: values[opt.id]||""})));
             });
         }
+        
+        this.config_fields.bind("change", this.property_changed);
     },
 
     render: function(){
@@ -492,13 +522,11 @@ var PropertyConfigForm = BaseForm.extend({
         $(this.el).empty()
             .append(container);
 
-        var save_button = this.make("input", { 
-            type: 'submit', 
-            value: "Сохранить"
-        });
-        $(this.el).append(save_button);
-
         return this.el;
+    },
+
+    property_changed: function(prop){
+        this.parent_view.options['parent_view'].render();
     }
 });
 
