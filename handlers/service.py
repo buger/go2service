@@ -139,6 +139,14 @@ class MyService(AppHandler):
 
 route('/my', MyService)
 
+
+class RedirectToMy(AppHandler):
+    def get(self):
+        self.redirect('http://www.go2service.ru/my')
+
+route('/', RedirectToMy, 'my')
+
+
 class Register(AppHandler):
     def show_error(self, message):
             self.session['flash'] = message

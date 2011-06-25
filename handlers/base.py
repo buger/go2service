@@ -130,16 +130,35 @@ def throw(obj):
     raise StandardError, obj
 
 
-routes = []
+routes = {}
 
-def route(string, handler):
+def route(string, handler, subdomain = 'www'):
+    if subdomain not in routes:
+        routes[subdomain] = []
+
     # convert /edit/:user_id to /edit/([^/]+)?
     string = re.sub("\:([^/]+)?", '([^/]+)?', string)
-    routes.append([string, handler])
-
+    routes[subdomain].append([string, handler])
 
 def start():
-    application = webapp.WSGIApplication(routes, debug=True)
+    http_full_host = os.environ['HTTP_HOST']
+
+    subdomain = re.match("(\w+)\.", http_full_host)
+
+    app_routes = []
+
+    if subdomain is None:
+        for k,v in routes.items():
+            for r in v:
+                app_routes.append(r)
+    else:
+        subdomain = subdomain.group(1)
+
+        if subdomain in routes:
+            for r in routes[subdomain]:
+                app_routes.append(r)
+
+    application = webapp.WSGIApplication(app_routes, debug=True)
     run_wsgi_app(application)
 
 class Devnull(AppHandler):
