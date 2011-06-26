@@ -8,7 +8,7 @@ var SelectFieldView = FieldView.extend({
     template: _.template([
         "<select>",
         "<% for (i in options) { %>",
-        "<option value='<%=options[i][0]%>'><%=options[i][1]%></option>",
+        "<option value='<%=options[i][0]%>' <% if (value == options[i][0]) { %> selected <% } %>><%=options[i][1]%></option>",
         "<% } %>",
         "</select>"
     ].join('\n')),
@@ -16,18 +16,21 @@ var SelectFieldView = FieldView.extend({
     initialize: function(opts){
         var self = this;
 
-        this.model.set({'options': [['','Загрузка...']]});
+        if (this.model.get('config')) {
+            this.model.set({'options': [['','Загрузка...']]});
+            this.ref_tree_item.set({'id':this.model.get('config')['ref']});
 
-        this.ref_tree_item.set({'id':this.model.get('config')['ref']});
-        
-        this.ref_tree_item.fetch({
-            success: function(){
-                var options = self.ref_tree_item.get('children').map(function(ref){ return [ref.id, ref.get('name')] });
-                self.model.set({ 'options': options }, { silent:true });
-                self.render();
-                self.model.unset('options');
-            }
-        });
+            this.ref_tree_item.fetch({
+                success: function(){
+                    var options = self.ref_tree_item.get('children').map(function(ref){ return [ref.id, ref.get('name')] });
+                    self.model.set({ 'options': options }, { silent:true });
+                    self.render();
+                    self.model.unset('options');
+                }
+            });
+        } else {
+            this.model.set({'options': []});
+        }
 
         this._super('initialize', opts);
     }

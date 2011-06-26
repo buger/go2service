@@ -27,7 +27,8 @@ steal("views/base_form",
         "views/tree_item"
 )
 .then(function(){
-    steal("base/reference")
+    steal("base/reference",
+          "controllers/ref");
 
     Backbone.emulateHTTP = true;
     $('input.datetime').datetimepicker({showWeek: true});

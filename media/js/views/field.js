@@ -61,7 +61,7 @@ var FieldView = Backbone.View.extend({
     },
 
     change_value: function(){
-        this.model.set({'value': this.$('.field input').val() });
+        this.model.set({'value': this.$('.field input, .field select').val() });
     },
 
     change_label: function(){

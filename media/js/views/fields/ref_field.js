@@ -22,16 +22,21 @@ var RefFieldView = FieldView.extend({
 
     initialize: function(opts){
         var self = this;
-        this.model.set({ view: 'Загрузка...' }, {silent: true});
-        
-        this.ref_item.set({id: this.model.get('value')});
 
-        this.ref_item.fetch({
-            success: function(){
-                self.model.set({ view: self.ref_item.get('name') }, {silent:true});       
-                self.render();
-            }
-        });
+        if (this.model.get('value')) {
+            this.model.set({ view: 'Загрузка...' }, {silent: true});
+            
+            this.ref_item.set({id: this.model.get('value')});
+
+            this.ref_item.fetch({
+                success: function(){
+                    self.model.set({ view: self.ref_item.get('name') }, {silent:true});       
+                    self.render();
+                }
+            });
+        } else {
+            this.model.set({ view: 'Не выбрано' }, {silent: true});
+        }
 
         this._super('initialize', opts);
     },    

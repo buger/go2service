@@ -17,8 +17,6 @@ function update_tree_item(key){
 }
 
 var RefForm = BaseForm.extend({
-    tagName: "form",
-
     initialize: function() {
         _.bindAll(this, "edit", "render", "updateTree");
         
@@ -71,6 +69,8 @@ var RefForm = BaseForm.extend({
 
     render: function() {
         var self = this;
+        
+        this.el.empty();
 
         var container = this.make("ol");
         
@@ -85,11 +85,11 @@ var RefForm = BaseForm.extend({
         
         var fieldset = this.make("fieldset", {}, container);
         
-        this.el.empty();
-        this.el.action = "/service/ref/"+this.model.id;
-        this.el.method = "POST";
+        var form = this.make("form", {class:'form'});
+        form.action = "/service/ref/"+this.model.id;
+        form.method = "POST";
 
-        this.el.append(fieldset);
+        form.appendChild(fieldset);
         
         var add_field = this.make("a", { class:'add_field', href:"javascript:;" }, "Добавить поле");
         var field_type = this.make("select", { class:"field_type" });
@@ -111,13 +111,13 @@ var RefForm = BaseForm.extend({
         add_field_container.appendChild(field_type)
         add_field_container.appendChild(add_field)
         
-        this.el.append(add_field_container);
+        form.appendChild(add_field_container);
         
         var save_button = this.make("input", { 
             type: 'submit', 
             value: this.model.id == 'new' ? "Добавить" : "Сохранить"
         });
-        this.el.append(save_button);
+        form.appendChild(save_button);
 
         if (this.model.id != 'new') {
             var delete_link = this.make("a", {'class': "delete"}, "Удалить");            
@@ -128,10 +128,10 @@ var RefForm = BaseForm.extend({
                     ref_workspace.saveLocation("");
                 }
             });
-            this.el.append(delete_link);            
+            form.appendChild(delete_link);            
         }
 
-        $(this.el).submit(function(){
+        $(form).bind('submit', function(){
             var is_new = self.model.id == 'new';
 
             self.model.save({}, {
@@ -144,6 +144,8 @@ var RefForm = BaseForm.extend({
 
             return false;
         });
+        
+        $(form).appendTo(this.el);
         
         this.activateTree();
 

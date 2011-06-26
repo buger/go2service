@@ -70,6 +70,8 @@
 				scriptTag = '<script ',
 				bodyText;
 			if ( options.src ) {
+                options.src = options.src + "?" + (+new Date());
+                
 				var src_file = steal.File(options.src);
 				if (!src_file.isLocalAbsolute() && !src_file.protocol() ) {
 					options.src = steal.root.join(options.src);
