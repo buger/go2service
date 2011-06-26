@@ -1,6 +1,21 @@
 ﻿{% extends "./layout.html" %}
+{% block menu %}
+<td width="25%"><a href="news.html">Новости</a></td>
+<td width="25%"><a href="ourwork.html">Наша работа</a></td>
+<td width="25%" class="active"><a href="company.html">Компания</a></td>
+<td width="25%"><a href="/my">Оставить заявку</a></td>
+{% endblock %}
+
 {% block content %}
 <div class="content_box1">
     Проводится набор стажеров. Краткий рассказ о&nbsp;себе и&nbsp;фото на&nbsp;internship@go2service.ru до&nbsp;11&nbsp;мая. Нужны желающие превратиться в&nbsp;будущем как в&nbsp;менеджеров, так и&nbsp;склонные к&nbsp;работе с&nbsp;механизмами и&nbsp;агрегатами, любящие человеческое общение, и&nbsp;просто хорошие люди. Стажеры, полагаясь на&nbsp;волю случая, смогут неделю поработать &laquo;в&nbsp;поле&raquo; участвую в&nbsp;техническом обслуживании оборудования, потом, скажем, собирать по&nbsp;архивам и&nbsp;библиотекам материалы для технической библиотеки. У&nbsp;каждого стажера будет наставник&nbsp;&mdash; сотрудник компании. Работа оплачивается в&nbsp;размере 10&nbsp;000&nbsp;PУБ.
 </div> <!--content box1--> 
+<div class="right_menu">                  
+<ul>
+  <li><a href="company.html">Информация</a></li>
+  <li><a href="contacts.html">Телефоны и адреса</a></li>
+  <li><a href="job.html">Работа в компании</a></li>
+  <li><b>Стажировка</b></li>
+</ul>	
+</div>
 {% endblock %}

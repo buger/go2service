@@ -1,8 +1,21 @@
 ﻿{% extends "./layout.html" %}
+{% block menu %}
+<td width="25%"><a href="news.html">Новости</a></td>
+<td width="25%"><a href="ourwork.html">Наша работа</a></td>
+<td width="25%" class="active"><a href="company.html">Компания</a></td>
+<td width="25%"><a href="/my">Оставить заявку</a></td>
+{% endblock %}
 {% block content %}
 <div class="content_box1">
 Телефоны и адреса:<br><br>Телефон: (495) 960-20-43, адрес электропочты: mailbox@gotoservice.ru<br><br>Адреса сайтов в Интернет: www.go2service.ru ксервису.рф<br><br>Почтовый адрес: Российская Федерация, 105064, Москва г., Земляной Вал ул., дом №50а/8, стр.6<br><br>Адрес местонахождения: Российская Федерация, 105064, Москва г., Земляной Вал ул., дом №50а/8, стр.6 или Москва г., пер. Обуха, 8а
 </div> <!--content box1--> 
 <div class="right_menu">                  
+<ul>
+  <li><a href="company.html">Информация</a></li>
+  <li><b>Телефоны и адреса</b></li>
+  <li><a href="job.html">Работа в компании</a></li>
+  <li><a href="internship.html">Стажировка</a></li>
+</ul>	
+
 </div>
 {% endblock %}

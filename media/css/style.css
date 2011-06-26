@@ -187,10 +187,10 @@ a:hover {
 
 .content_box1{ 
 font-family:Times New Roman; 
-font-size:11px; 
+font-size:14px; 
 color:#333; 
 width: 75%;
-float:left; 
+float:right; 
 margin-top:40px; 
 margin-left:10px; 
 margin-bottom:100px;
@@ -199,11 +199,10 @@ margin-bottom:100px;
 .right_menu { 
 font-family:Times New Roman; 
 font-size:14px;  
-margin-left:90px; 
+margin-right:90px; 
 width:155px; 
-/* float:right; */
-float:left;
-margin-top:50px; 
+float:right; 
+margin-top:40px; 
 margin-bottom:100px
 }
 
