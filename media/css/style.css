@@ -78,6 +78,10 @@ a:hover {
     text-shadow:-1px -1px 0 rgba(0, 0, 0, 0.2)
 }
 
+#menu .my a:hover {
+    background: #E80C02 !important;
+}
+
 /*----- Zajav -----*/
 #zajav {
 	background-color: #ffffff;
