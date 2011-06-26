@@ -13,21 +13,7 @@
     <title>{% block title %}Service{% endblock %}</title>
     <body>
         {% block body %}{% endblock %}
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
-
-        {{ "jquery-ui-i18n.min"|javascript }}
-        {{ "jquery-ui-timepicker-addon"|javascript }}
-        {{ "grid.locale-ru"|javascript }}
-        {{ "jquery.jqGrid.min"|javascript }}
-        {{ "jquery.form"|javascript }}
-        {{ "jquery.sap.min"|javascript }}
-        {{ "store.min"|javascript }}
-        {{ "underscore-min"|javascript }}
-        {{ "backbone-min"|javascript }}
-        {{ "facebox"|javascript }}
-        {{ "jquery.jscrollpane.min"|javascript }}        
-        {{ "application"|javascript }}
-        {{ "reference"|javascript }}
+        
+        <script type='text/javascript' src='/js/steal/steal.js?application.js'></script>
     </body>
 </html>

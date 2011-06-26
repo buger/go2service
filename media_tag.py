@@ -13,4 +13,4 @@ def stylesheet(name):
 
 @register.filter
 def javascript(name):
-    return "<script src='/js/%s.js?%d'></script>" % (name, time())
+    return "<script src='/js/%s.js'></script>" % (name)
