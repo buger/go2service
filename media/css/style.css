@@ -72,6 +72,12 @@ a:hover {
     background: #eee;
 }
 
+#menu .my {
+    background: #E80C02;
+    color: white;
+    text-shadow:-1px -1px 0 rgba(0, 0, 0, 0.2)
+}
+
 /*----- Zajav -----*/
 #zajav {
 	background-color: #ffffff;
@@ -595,3 +601,5 @@ margin-bottom:100px
     color: red !important;  
     border-color: red !important;
 }
+
+
