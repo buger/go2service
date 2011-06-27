@@ -55,13 +55,7 @@ var RefFieldView = FieldView.extend({
         
         container.find('input[type="button"]').bind('click', function(){
             var selected = container.find('div.active')[0].view.model;            
-
-            var config = _.extend({}, self.parent_view.model.get('config'));
-            config[self.model.get('id')] = selected.id;
-
-            self.parent_view.model.set({'config': config});
-
-            self.model.change();
+            self.model.set({'value': selected.id });
 
             $.facebox.close();
         });
