@@ -3,6 +3,7 @@ var tree_item_tmpl = ["<div class='item'>",
                         "<div class='panel' style='display:none'>",
                             "<a href='#add/<%=id%>'>Создать запись</a>",
                             "<a href='#import/<%=id%>'>Импорт</a>",
+							"<a href='#export/<%=id%>'>Экспорт</a>",
                         "</div>",
                         "<a class='name'><%= name || 'Без названия' %></a>",
                      "</div>"].join('');
