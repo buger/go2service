@@ -92,14 +92,9 @@ var RefForm = BaseForm.extend({
         form.appendChild(fieldset);
         
         var add_field = this.make("a", { class:'add_field', href:"javascript:;" }, "Добавить поле");
-        var field_type = this.make("select", { class:"field_type" });
         
-        var field_types = {'text': 'Текстовое поле', 'select': 'Справочник'};
+        var field_type = this.fieldTypesSelect();
 
-        _(field_types).each(function(value, key){
-            field_type.appendChild(self.make("option", {value: key}, value));
-        });
- 
         $(add_field).bind('click', function(){
             var type = field_type.options[field_type.selectedIndex].value;
             self.model.get('props').add({id: +new Date, label: "Без названия", type: type, value: "" });
@@ -128,7 +123,7 @@ var RefForm = BaseForm.extend({
                     ref_workspace.saveLocation("");
                 }
             });
-            form.appendChild(delete_link);            
+            form.appendChild(delete_link);         
         }
 
         $(form).bind('submit', function(){
@@ -139,8 +134,16 @@ var RefForm = BaseForm.extend({
                     self.updateTree(is_new);
                     self.render();
                     ref_workspace.saveLocation("edit/"+model.id);
+                },
+
+                error: function(model, response) {
+                    save_button.disabled = false;
+                    save_button.value = "Сохранить";
                 }
             });
+
+            save_button.disabled = true;
+            save_button.value = "Сохранение...";
 
             return false;
         });

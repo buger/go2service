@@ -513,7 +513,6 @@ class ImportTask(ServiceHandler):
                         'imported': True
                     })
             else:
-
                 if u'parents' == col_info['id'].lower():
                     if val.strip() == '':
                         val = ref_import.root

@@ -77,7 +77,7 @@ class Ref(db.Expando):
                         try:
                             prop['value'] = getattr(self, str(prop['id']))
                         except AttributeError:
-                            pass
+                            prop['value'] = ''
 
                         data['props'].append(prop)
 

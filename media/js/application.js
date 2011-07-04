@@ -23,6 +23,7 @@ steal("views/base_form",
            "views/fields/select_field",
            "views/fields/static",
            "views/fields/text_field",
+           "views/fields/checkbox_field",
         "views/tree",
         "views/tree_item"
 )
