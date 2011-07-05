@@ -3,7 +3,7 @@ var RefWorkspace = Backbone.Controller.extend({
         "edit/:key": "edit",
         "add/:key": "add",
         "import/:key": "import",
-		"export/:key": "export"
+        "export/:key": "export"
     },
 
     edit: function(key) {

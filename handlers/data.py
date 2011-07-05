@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import with_statement   
 from handlers.service import *
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.api import taskqueue
-
-from google.appengine.api import files
 
 import simplejson as json
 import time
@@ -19,118 +16,7 @@ class RefImportUploadUrl(AppHandler):
 route('/service/ref/import/upload_url/:key', RefImportUploadUrl)
 
 
-#=========== by fox ==================================================
-#обработка экспорта
 
-from lib.models import *
-from lib.unicode_csv import *
-
-
-#все возможные унаследованные имена поля
-def parent_label(ref, data):
-    for parent in ref.ancestors:
-        parent = db.get(parent)            
-        for prop in parent.props:
-            data.append(prop['label'])
-
-#все возможные унаследованные свойства            
-def parent_props(ref):
-    data = []
-    for parent in ref.ancestors:
-        parent = db.get(parent)            
-        for prop in parent.props:
-            data.append(prop)
-    return data
-
-            
-#все унаследованные, собственные и дочерние имена полей            
-def child_label(ref, data):           
-    def func_child_label(ref, data):
-        for prop in ref.props:
-            data.append(prop['label'])
-
-        key = ref.key()    
-        items = eval(ref.kind()).all().filter("parents =", key)    
-        for item in items:
-            func_child_label(item,data)
-        
-    
-    parent_label(ref, data)
-    func_child_label(ref, data)
-    data = list(set(data))
-
-#запись объекта в формате csv        
-def writerow(ref, writer, cols):
-    row = []
-    row.append(ref.name)
-    if ref.parents:
-        row.append(db.get(ref.parents[0]).name) #todo check parents and many parents
-    else:
-        row.append('')
-    props = ref.props
-    p_props = parent_props(ref)
-    for col in cols:            
-        find_prop = filter(lambda r: r.get('label') == col, props)
-        if len(find_prop) > 0:
-            prop = find_prop[0]
-            row.append('*')                                                
-            row.append(prop['type'])
-            row.append(getattr(ref, str(prop['id'])))
-        else:
-            find_prop = filter(lambda r: r.get('label') == col, p_props)
-            if len(find_prop) > 0:
-                prop = find_prop[0]
-                row.append('')                                                
-                row.append(prop['type'])
-                row.append(getattr(ref, str(prop['id'])))
-            else:
-                row.append('')                                                
-                row.append('')
-                row.append('')
-                                   
-    writer.writerow(row)
-    #print row
-
-    #рекурсивный спуск по дереву
-    key = ref.key()    
-    items = eval(ref.kind()).all().filter("parents =", key)    
-    for item in items:
-        writerow(item, writer, cols)
-
- 
-            
-    
-#непосредственно обработка экспорта
-    
-class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
-    def get(self, key):    
-        file_name = files.blobstore.create(mime_type='text/csv')
-                
-        ref = Ref.get(db.Key(key))        
-        cols = []
-        child_label(ref, cols)        
-
-        header = ['Name', 'Parents']
-        for col in cols:
-            header.append('%s - Owner' % col)
-            header.append('%s - Type' % col)
-            header.append('%s - Value' % col)
-
-        with files.open(file_name, 'a') as f:
-            writer = UnicodeWriter(f, delimiter = ',', quoting = csv.QUOTE_ALL)    
-            writer.writerow(header)
-            writerow(ref, writer, cols)
-            
-
-        # Finalize the file. Do this before attempting to read it.
-        files.finalize(file_name)
-        # Get the file's blob key
-        
-        blob_key = files.blobstore.get_blob_key(file_name)                       
-        self.send_blob(blob_key)
-
-route('/service/ref/download/:key', ServeHandler)
-#================================================
 
 class ParseImportHeaderError(StandardError):
     pass
