@@ -50,7 +50,7 @@ var TreeItemView = Backbone.View.extend({
         
         if (ref_form.model.id == this.model.id)
             $(this.el).addClass('opened');        
-
+               
         if (this.model.get('group')) {
             $(this.el).addClass('group');
         }
@@ -112,6 +112,10 @@ var TreeItemView = Backbone.View.extend({
         $(this.el).parents('.level').nextAll().find('div.opened').removeClass('opened');
 
         $(this.el).addClass('opened');        
+        
+        if (this.model.get('group')) {
+            $(this.el).addClass('group');
+        }        
 
         if (!this.model.get('loaded')) {
             $(this.el).parents('.level').next().html('Загрузка...');
