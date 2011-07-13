@@ -2,7 +2,8 @@ var RefWorkspace = Backbone.Controller.extend({
     routes: {
         "edit/:key": "edit",
         "add/:key": "add",
-        "import/:key": "import"
+        "import/:key": "import",
+		"export/:key": "export"
     },
 
     edit: function(key) {
@@ -15,7 +16,10 @@ var RefWorkspace = Backbone.Controller.extend({
 
     import: function(key) {
         new ImportForm({ model: new ImportModel({root: key}) });
-    }
+    },
+    export: function(key) {
+        new ExportForm({ model: new ImportModel({root: key}) });
+    }		
 });
 
 var ref_workspace = new RefWorkspace();
