@@ -141,7 +141,10 @@ def route(string, handler, subdomain = 'www'):
     routes[subdomain].append([string, handler])
 
 def start():
-    http_full_host = os.environ['HTTP_HOST']
+    if 'HTTP_HOST' in os.environ:
+        http_full_host = os.environ['HTTP_HOST']
+    else
+        http_full_host = 'localhost'
 
     subdomain = re.match("(\w+)\.", http_full_host)
 
