@@ -3,38 +3,34 @@ from handlers.base import *
 
 class ServiceHandler(AppHandler):
     def render_template(self, name, data = None):
+        user = UserModel.gql("WHERE user = USER('%s')" % self.session['email']).get()
+
         if data is None:
             data = {}
 
-        data['user'] = users.get_current_user()
+        data['user'] = user
         data['login_url'] = users.create_login_url("/service")
         data['logout_url'] = users.create_logout_url("/service")
+        data['production'] = os.environ['SERVER_NAME'] != 'localhost'
+
+        if not users.is_current_user_admin():
+            if user is None:
+                return super(ServiceHandler, self).render_template("service/login.html", data)
+            else:
+                if not user.verified:
+                    return super(ServiceHandler, self).render_template("service/wait_for_confirm.html", data)
+        else:
+            data['user'] = users.get_current_user()
 
         super(ServiceHandler, self).render_template(name, data)
 
 
 class ServicePage(ServiceHandler):
     def get(self):
-        user = users.get_current_user()
-
-        if user is None:
-            self.render_template("service/login.html");
-        else:
-            if users.is_current_user_admin():
-                return self.render_template("service/workspace.html")
-
-            user_model = UserModel.all().filter("user =", user).get()
-
-            if user_model is None:
-                user_model = UserModel(user = user)
-                user_model.put()
-
-            if user_model.verified:
-                self.render_template("service/workspace.html")
-            else:
-                self.render_template("service/wait_for_confirm.html")
+        self.render_template("service/workspace.html")
 
 route('/service', ServicePage)
+route('/service/', ServicePage)
 
 
 class ServiceUsers(ServiceHandler):
@@ -211,3 +207,11 @@ class Login(AppHandler):
 
 
 route('/login', Login)
+
+
+class StealJS(AppHandler):
+    def get(self):
+        self.render_template("service/stealjs.html")
+
+route('/service/stealjs', StealJS)
+

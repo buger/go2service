@@ -13,7 +13,11 @@
     <title>{% block title %}Service{% endblock %}</title>
     <body>
         {% block body %}{% endblock %}
-        
+
+        {% if production %}
+        <script type='text/javascript' src='/js/steal/steal.production.js?application.js'></script>
+        {% else %}
         <script type='text/javascript' src='/js/steal/steal.js?application.js'></script>
+        {% endif %}
     </body>
 </html>
