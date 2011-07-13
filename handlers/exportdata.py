@@ -49,13 +49,16 @@ def get_all_label(ref):
     
     
 #запись объекта в формате csv        
-def writerow(ref, writer, cols, p_props):
+def writerow(ref, writer, cols, p_props, first):
     row = []
     row.append(ref.name)
-    if ref.parents:
-        row.append('|'.join([db.get(parent).name for parent in ref.parents])) 
+    
+    if  first: #записываем родителей
+        row.append(""); #если корневой элемент
+        first = False
     else:
-        row.append('')
+        row.append('|'.join([db.get(parent).name for parent in ref.parents]))                                 
+    
     props = ref.props    
     
     for col in cols:            
@@ -92,7 +95,7 @@ def writerow(ref, writer, cols, p_props):
     key = ref.key()    
     items = ref.__class__.all().filter("parents =", key)        
     for item in items:
-        writerow(item, writer, cols, props + p_props)
+        writerow(item, writer, cols, props + p_props, first)
 
  
             
@@ -114,10 +117,11 @@ class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
             header.append('%s - Value' % col)
 
         with files.open(file_name, 'a') as f:
-            writer = UnicodeWriter(f, delimiter = ',', quoting = csv.QUOTE_ALL)    
+            writer = UnicodeWriter(f, delimiter = ',', quoting = csv.QUOTE_MINIMAL)
             writer.writerow(header)
             p_props = parent_props(ref)
-            writerow(ref, writer, cols, p_props)
+            first = True
+            writerow(ref, writer, cols, p_props, first)
             
 
         # Finalize the file. Do this before attempting to read it.

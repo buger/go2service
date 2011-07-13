@@ -31,7 +31,7 @@ rCOL_NAME = re.compile(u"[—-].*")
 
 class RefImportUpload(blobstore_handlers.BlobstoreUploadHandler):
     def read_header(self, ref, reader):
-        line = reader.readline()
+        line = reader.readline()        
 
         cols = line.split(',')
 
@@ -77,8 +77,9 @@ class RefImportUpload(blobstore_handlers.BlobstoreUploadHandler):
 
 
     def post(self, key):
-        upload = self.get_uploads()[0]
 
+        upload = self.get_uploads()[0]
+        
         ref_import = RefImport(blob_key = str(upload.key()), root = key, state = "processing", all_count = upload.size)
         ref_import.put()
 
@@ -361,6 +362,7 @@ rCSV = re.compile("\"([^\"]+?)\",?|([^,]+),?|,")
 
 class ImportTask(ServiceHandler):
     def read_ref(self, reader, ref_import):
+    
         line = reader.readline()
 
         cols = [c[0] or c[1] for c in rCSV.findall(line)]
@@ -429,7 +431,7 @@ class ImportTask(ServiceHandler):
 
         for_put = []
 
-        for i in range(10):
+        for i in range(100):
             if reader.tell() < reader.blob_info.size:
                 try:
                     for_put.append(self.read_ref(reader, ref_import))
@@ -449,7 +451,7 @@ class ImportTask(ServiceHandler):
 
 
         if ref_import.state != "merging":
-            ref_import.incr(reader.tell()-position)
+            ref_import.incr(reader.tell() - position)
 
             taskqueue.add(url="/service/ref/import/task/%s/%d" % ( str(ref_import.key()), reader.tell()), params = {'rows':rows})
         else:
