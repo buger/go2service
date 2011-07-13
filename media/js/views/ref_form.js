@@ -85,13 +85,13 @@ var RefForm = BaseForm.extend({
         
         var fieldset = this.make("fieldset", {}, container);
         
-        var form = this.make("form", {class:'form'});
+        var form = this.make("form", { 'class':'form' });
         form.action = "/service/ref/"+this.model.id;
         form.method = "POST";
 
         form.appendChild(fieldset);
         
-        var add_field = this.make("a", { class:'add_field', href:"javascript:;" }, "Добавить поле");
+        var add_field = this.make("a", { 'class':'add_field', href:"javascript:;" }, "Добавить поле");
         
         var field_type = this.fieldTypesSelect();
 

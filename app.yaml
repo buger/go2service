@@ -12,6 +12,11 @@ handlers:
 - url: /js
   static_dir: media/js
 
+- url: /production\.js
+  static_files: media/js/production.js
+  upload: media/js/production.js
+
+
 - url: /images
   static_dir: media/images
 

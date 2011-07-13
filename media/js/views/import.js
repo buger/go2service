@@ -58,7 +58,7 @@ var ImportForm = Backbone.View.extend({
             "<h3>Обновление справочника</h3>",
             "<div class='progress'><div class='bar' style='width:<%=count/all_count*100%>%'></div></div>",
             "<div class='new-import'>Остановить и начать новый импорт</div>"
-        ].join('')),
+        ].join(''))
     },
     
     initialize: function(){
@@ -268,5 +268,5 @@ var ExportForm = Backbone.View.extend({
 //			}, 5000);
 
         this.delegateEvents();
-    },	
+    }
 })

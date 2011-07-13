@@ -10,7 +10,7 @@ var BaseForm = Backbone.View.extend({
     fieldTypesSelect: function(default_value){
         var self = this;
 
-        var field_type = this.make("select", { class:"field_type" });        
+        var field_type = this.make("select", { 'class':"field_type" });        
 
         _(this.editable_field_types).each(function(value, key){
             var option_attrs = { value: key };
