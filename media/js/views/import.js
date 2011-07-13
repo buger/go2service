@@ -17,7 +17,7 @@ var ImportForm = Backbone.View.extend({
         ].join('')),
 
         'processing': _.template([
-            "<h3>Обработка записей</h3>",
+            "<h3>Обработка записей<%=count%>/<%=all_count%></h3>",
             "<div><%=message%></div>",
             "<div class='progress'><div class='bar' style='width:<%=count/all_count*100%>%'></div></div>",
             "<div class='new-import'>Остановить и начать новый импорт</div>"
@@ -55,7 +55,7 @@ var ImportForm = Backbone.View.extend({
         ].join('')),
 
         'finalizing': _.template([
-            "<h3>Обновление справочника</h3>",
+            "<h3>Обновление справочника <%=count%>/<%=all_count%></h3>",
             "<div class='progress'><div class='bar' style='width:<%=count/all_count*100%>%'></div></div>",
             "<div class='new-import'>Остановить и начать новый импорт</div>"
         ].join('')),
