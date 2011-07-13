@@ -61,11 +61,19 @@ var FieldView = Backbone.View.extend({
     },
 
     change_value: function(){
-        this.model.set({'value': this.$('.field input, .field select').val() });
+        var field = this.$('.field input, .field select');
+
+        if (field.attr('type') == 'checkbox') {
+            var value = field.attr('checked');
+        } else {
+            var value = field.val();
+        }
+
+        this.model.set({ 'value': value });
     },
 
     change_label: function(){
-        this.model.set({'label': this.$('label input').val() });
+        this.model.set({ 'label': this.$('label input').val() });
     }
 });
 

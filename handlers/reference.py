@@ -109,14 +109,43 @@ class RefGet(ServiceHandler):
 
             ref.name = model['name']
 
+            old_props = ref.props
+
             ref.props = []
 
             for prop in model['props']:
-                if prop['type'] != u'static' and prop['type'] != u'links':
-                    setattr(ref, str(prop['id']), prop['value'])
+
+                if prop['type'] == 'select':
+                    try:
+                        old_prop = filter(lambda p: p['id'] == prop['id'], old_props)[0]
+                    except:
+                        old_prop = {}
+
+                    if 'config' in old_prop and 'act_as_parent' in old_prop['config'] and old_prop['config']['act_as_parent']:
+                        value = getattr(ref, str(old_prop['id']))
+
+                        if value != '':
+                            ref.parents.remove(db.Key(value))
+                            ref.ancestors.remove(db.Key(value))
+
+                    if 'config' in prop and 'act_as_parent' in prop['config'] and prop['config']['act_as_parent']:
+                        if prop['value'] != '':
+                            parent = db.get(db.Key(prop['value']))
+
+                            if not parent.group:
+                                parent.group = True
+                                parent.put()
+
+                            ref.parents.append(parent.key())
+                            ref.ancestors.append(parent.key())
 
                 if u'locked' not in prop:
                     ref.props.append(prop)
+
+                if prop['type'] != u'static' and prop['type'] != u'links':
+                    setattr(ref, str(prop['id']), prop['value'])
+
+                del prop['value']
 
             if not ref.is_saved():
                 counter = CachedCounter('Ref')
