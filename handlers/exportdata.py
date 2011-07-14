@@ -49,53 +49,55 @@ def get_all_label(ref):
     
     
 #запись объекта в формате csv        
-def writerow(ref, writer, cols, p_props, first):
-    row = []
-    row.append(ref.name)
-    
-    if  first: #записываем родителей
-        row.append(""); #если корневой элемент
-        first = False
-    else:
-        row.append('|'.join([db.get(parent).name for parent in ref.parents]))                                 
-    
-    props = ref.props    
-    
-    for col in cols:            
-        find_prop = filter(lambda r: r.get('label') == col, props)
-        if find_prop:
-            prop = find_prop[0]
-            row.append('*')                                                
-            row.append(prop['type'])
-            try:
-                row.append(getattr(ref, str(prop['id'])))
-            except AttributeError:
-                row.append('')               
-        else:
-            #p_props = parent_props(ref)
-            find_prop = filter(lambda r: r.get('label') == col, p_props)
-            if find_prop:
-                prop = find_prop[0]
-                row.append('')                                                
-                row.append(prop['type'])
-                try:
-                    row.append(getattr(ref, str(prop['id'])))
-                except AttributeError:
-                    row.append('')               
+def writerow(ref, writer, cols, parent_props):
+    def func_writerow (refs, p_props):
+        for item in refs:
+            row = []
+            row.append(item.name)
+            
+            parents = [db.get(parent) for parent in item.parents]
+            if ref.key() in [parent.key() for parent in parents]:                        
+                row.append(""); #если корневой элемент
             else:
-                row.append('')                                                
-                row.append('')
-                row.append('')
+                row.append('|'.join([parent.name for parent in parents]))                                 
+            
+            props = item.props    
+            
+            for col in cols:            
+                find_prop = filter(lambda r: r.get('label') == col, props)
+                if find_prop:
+                    prop = find_prop[0]
+                    row.append('*')                                                
+                    row.append(prop['type'])
+                    try:
+                        row.append(getattr(item, str(prop['id'])))
+                    except AttributeError:
+                        row.append('')               
+                else:
+                    find_prop = filter(lambda r: r.get('label') == col, p_props)
+                    if find_prop:
+                        prop = find_prop[0]
+                        row.append('')                                                
+                        row.append(prop['type'])
+                        try:
+                            row.append(getattr(item, str(prop['id'])))
+                        except AttributeError:
+                            row.append('')               
+                    else:
+                        row.append('')                                                
+                        row.append('')
+                        row.append('')
 
-                                   
-    writer.writerow(row)
-    #print row
+            writer.writerow(row) #запись строки            
+            items = item.__class__.all().filter("parents =", item.key())                
+            
+            func_writerow(items, props + p_props)  #рекурсивный спуск по дереву
 
-    #рекурсивный спуск по дереву
+                                          
+    #== main writerow ==
     key = ref.key()    
-    items = ref.__class__.all().filter("parents =", key)        
-    for item in items:
-        writerow(item, writer, cols, props + p_props, first)
+    items = ref.__class__.all().filter("parents =", key)            
+    func_writerow(items, parent_props + ref.props)
 
  
             
@@ -119,9 +121,8 @@ class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
         with files.open(file_name, 'a') as f:
             writer = UnicodeWriter(f, delimiter = ',', quoting = csv.QUOTE_MINIMAL)
             writer.writerow(header)
-            p_props = parent_props(ref)
-            first = True
-            writerow(ref, writer, cols, p_props, first)
+            p_props = parent_props(ref)            
+            writerow(ref, writer, cols, p_props)
             
 
         # Finalize the file. Do this before attempting to read it.
