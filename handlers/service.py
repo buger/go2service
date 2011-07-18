@@ -3,15 +3,17 @@ from handlers.base import *
 
 class ServiceHandler(AppHandler):
     def render_template(self, name, data = None):
-        user = UserModel.gql("WHERE user = USER('%s')" % self.session['email']).get()
-
         if data is None:
             data = {}
 
-        data['user'] = user
+        try:
+            user = UserModel.gql("WHERE user = USER('%s')" % self.session['email']).get()
+            data['user'] = user
+        except:
+            user = None
+
         data['login_url'] = users.create_login_url("/service")
         data['logout_url'] = users.create_logout_url("/service")
-        data['production'] = os.environ['SERVER_NAME'] != 'localhost'
 
         if not users.is_current_user_admin():
             if user is None:
@@ -81,6 +83,9 @@ class ServiceActivateUser(ServiceHandler):
 
 route('/service/user/activate/:user_id', ServiceActivateUser)
 
+import random
+
+from handlers.google_calendar import *
 
 class MyService(AppHandler):
     def get(self):
@@ -96,30 +101,59 @@ class MyService(AppHandler):
         else:
             data = {}
 
+        data['issue_id'] = random.randint(1000, 9999)
 
         self.render_template("my.html", {'data': data} )
 
     def post(self):
-        title = u"Заявка не ремонт оборудования: %s" % self.request.get('company')
+        title = u"Заявка №%s" % self.request.get('issue_id')
         body = u"""
-            Юридическое лицо: %s
-            Объект: %s
-            Адрес места эксплуатации: %s
-            Контактное лицо: %s
-            Телефонный номер контактного лица: %s
-            Адрес электронной почты: %s
-            Описание оборудования: %s
+            Заявка: %s
+            Должность, ФИО контактного лица: %s
+            Телефон контактного лица: %s
+            Юридическое назване клиента: %s
+
+            Название объекта: %s
+            Тип объекта: %s
+            Адрес объекта: %s
+            Должность, ФИО ответственного лица на объекте: %s
+
+            Тип оборудования: %s
+            Производитель оборудования: %s
+            Марка оборудования: %s
+            Модель оборудования: %s
+
+            Дата приема заявки на обслуживание: %s
             Текст заявки: %s
-        """ % (self.request.get('company'),
-               self.request.get('object'),
-               self.request.get('address'),
+            Ожидаемое время исполнения заявки: %s
+        """ % (self.request.get('issue_id'),
                self.request.get('contact'),
                self.request.get('phone'),
-               self.request.get('email'),
-               self.request.get('description'),
-               self.request.get('text'))
+               self.request.get('company'),
+               self.request.get('object_name'),
+               self.request.get('object_type'),
+               self.request.get('object_address'),
+               self.request.get('object_contact'),
+               self.request.get('device_type'),
+               self.request.get('device_manufactorer'),
+               self.request.get('device_brand'),
+               self.request.get('device_model'),
+               self.request.get('date'),
+               self.request.get('text'),
+               self.request.get('estimate')
+               )
 
         mail.send_mail("vadim@go2service.ru", "srv@go2service.ru", title, body)
+
+        try:
+            client = gdata.calendar.client.CalendarClient()
+
+            token = pickle.loads(GoogleDataAuth.all().get().token)
+
+            client.auth_token = token
+            InsertSingleEvent(client, title, body, self.request.get('company'))
+        except:
+            pass
 
         self.session['flash'] = u"Ваша заявка принята!"
         self.session['email'] = self.request.get('email')

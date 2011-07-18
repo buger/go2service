@@ -15,6 +15,7 @@ handlers:
 - url: /production\.js
   static_files: media/js/production.js
   upload: media/js/production.js
+  expiration: "1s"
 
 
 - url: /images

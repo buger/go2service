@@ -92,9 +92,9 @@ class Ref(db.Expando):
 
 
         return data
-    
-                
-            
+
+
+
 
 
 class RefImport(db.Model):
@@ -399,6 +399,8 @@ class Issue(db.Model):
         return formatted_changes
 
 
+class GoogleDataAuth(db.Model):
+    token = db.BlobProperty()
 
 
 from google.appengine.api import apiproxy_stub_map
