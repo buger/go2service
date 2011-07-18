@@ -25,6 +25,9 @@ import copy
 
 cookie_secret = 'af8559a6788b1ee9fbe34307bc1ac39caf8559a6788b1ee9fbe34307bc1ac39c'
 
+def is_production_mode():
+    return os.environ['SERVER_NAME'] != 'localhost'
+
 class Session:
     def __init__(self, handler):
         self.cookieutil = LilCookies(handler, cookie_secret)
@@ -88,6 +91,8 @@ class AppHandler(webapp.RequestHandler):
         data['lang'] = os.environ['i18n_lang']
 
         data['session'] = self.session
+
+        data['production'] = is_production_mode()
 
         html = template.render(path, data)
 

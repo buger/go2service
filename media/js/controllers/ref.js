@@ -14,10 +14,11 @@ var RefWorkspace = Backbone.Controller.extend({
         ref_form.add(key);
     },
 
-    import: function(key) {
+    'import': function(key) {
         new ImportForm({ model: new ImportModel({root: key}) });
     },
-    export: function(key) {
+    
+    'export': function(key) {
         new ExportForm({ model: new ImportModel({root: key}) });
     }		
 });

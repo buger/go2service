@@ -1,5 +1,5 @@
-steal("https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js",
-      "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js",
+steal("base/jquery.min.js",
+      "base/jquery-ui.min.js",
       "base/jquery-ui-i18n.min",
       "base/jquery-ui-timepicker-addon",
       "base/jquery-ui-timepicker-i18n",

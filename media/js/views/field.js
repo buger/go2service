@@ -23,21 +23,21 @@ var FieldView = Backbone.View.extend({
             var label_text = this.make("input", {value: this.model.get('label'), type: 'text'});
         }
         
-        var label = this.make("label", { for: this.model.id }, label_text);
+        var label = this.make("label", { 'for': this.model.id }, label_text);
         
-        var field_container = this.make("span", {class:'field'}, this.template(this.model.toJSON()));
+        var field_container = this.make("span", { 'class': 'field' }, this.template(this.model.toJSON()));
         $(this.el).append(label)
             .append(field_container);
         
         if (!this.model.get('locked')) {
-            var delete_link = this.make("a", {class: 'delete_field'}, "✕");
+            var delete_link = this.make("a", {'class': 'delete_field'}, "✕");
             $(this.el).append(delete_link);
             
-            var configure_link = this.make("a", {class: 'configure_field'}, "C");
+            var configure_link = this.make("a", {'class': 'configure_field'}, "C");
             $(this.el).append(configure_link);
         } else {
             if (this.model.get('inherited_from')) {
-                var info = this.make('span', {class: 'info', title:"Унаследовано от "+this.model.get('inherited_from')}, 'i');
+                var info = this.make('span', {'class': 'info', title:"Унаследовано от "+this.model.get('inherited_from')}, 'i');
                 $(this.el).append(info);
             }
         }

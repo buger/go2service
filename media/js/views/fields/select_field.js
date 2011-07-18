@@ -1,3 +1,44 @@
+// Getting ref tree using recursion
+function getTree(tree_item, callback, all_children, level){
+    if (!all_children) {
+        level = 0;
+        all_children = [];
+    }
+
+    var finished = 0;
+    
+    var complete_callback = function(){
+        finished += 1;
+
+        if (callback && finished == tree_item.get('children').length) {
+            callback(all_children);
+        }
+    }
+    
+    if (tree_item.get('group')) {
+        tree_item.get('children').map(function(ref){
+            ref.set({ 'level':level });
+            all_children.push(ref);
+
+            ref.fetch({
+                success: function(){
+                    getTree(ref, function(){
+                        complete_callback();
+                    }, all_children, level+1);
+                }
+            });
+        });
+    } else {
+        callback(all_children);        
+    }
+}
+
+
+String.prototype.repeat = function( num ) {
+    return new Array( num + 1 ).join( this );
+}
+
+
 var SelectFieldView = FieldView.extend({
     config_fields: [
         { type:"ref", label:"Родительский справочник", id: "ref" },
@@ -28,15 +69,23 @@ var SelectFieldView = FieldView.extend({
 
                 this.ref_tree_item.fetch({
                     success: function(){
-                        var options = self.ref_tree_item.get('children').map(function(ref){ return [ref.id, ref.get('name')] });
+                        self.ref_tree_item.set({ 'group': true });
 
-                        if (self.model.get('config')['show_null']) {
-                            options.splice(0, 0, ['','']);
-                        }
+                        getTree(self.ref_tree_item, function(children){
+                            var options = _(children).map(function(ref){ 
+                                // Repeat spaces based on ref level
+                                var label = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(ref.get('level')) + ref.get('name');
+                                return [ref.id, label];
+                            });
 
-                        self.model.set({ 'options': options }, { silent:true });
-                        self.render();
-                        self.model.unset('options');
+                            if (self.model.get('config')['show_null']) {
+                                options.splice(0, 0, ['','']);
+                            }
+
+                            self.model.set({ 'options': options }, { silent:true });
+                            self.render();
+                            self.model.unset('options');
+                        });
                     }
                 });
             } else {

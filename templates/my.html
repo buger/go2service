@@ -41,37 +41,68 @@
         <form action="/my" method="POST">
             <ol>
                 <li>
-                    <label>Юридическое лицо</label>
-                    <input name="company" type="text" value="{{data.company}}"/> 
+                    <h2>Заявка №{{data.issue_id}}</h2>
+                    <input type="hidden" name="issue_id" value="{{data.issue_id}}" />
                 </li>
                 <li>
-                    <label>Объект</label>
-                    <input name="object" type="text"/> 
-                </li>
-                <li>
-                    <label>Адрес места эксплуатации</label>
-                    <input name="address" type="text"/> 
-                </li>
-                <li>
-                    <label>Контактное лицо</label>
+                    <label>Должность, ФИО контактного лица</label>
                     <input name="contact" type="text" value="{{data.contact}}"/> 
                 </li>
                 <li>
-                    <label>Телефонный номер контактного лица</label>
+                    <label>Телефон контактного лица</label>
                     <input name="phone" type="text" value="{{data.phone}}"/> 
                 </li>                   
                 <li>
-                    <label>Адрес электронной почты</label>
-                    <input name="email" type="text" value="{{data.email}}"/> 
+                    <label>Юридическое название клиента</label>
+                    <input name="company" type="text" value="{{data.company}}"/> 
+                </li>
+
+                <li style='margin-top: 40px;'>
+                    <label>Название объекта</label>
+                    <input name="object_name" type="text"/> 
+                </li>
+                <li>
+                    <label>Тип объекта</label>
+                    <input name="object_type" type="text"/> 
+                </li>
+                <li>
+                    <label>Адрес объекта</label>
+                    <input name="object_address" type="text"/> 
+                </li>
+                <li>
+                    <label>Должность, ФИО ответственного лица на объекте</label>
+                    <input name="object_contact" type="text" /> 
+                </li>
+
+                <li style="margin-top: 40px;">
+                    <label>Тип оборудования</label>
+                    <input name="device_type" type="text" /> 
                 </li>                   
                 <li>
-                    <label>Описание оборудования</label>
-                    <textarea name="description"></textarea>
+                    <label>Производитель оборудования</label>
+                    <input name="device_manufactorer" type="text" /> 
                 </li>                   
                 <li>
-                    <label>Текст заявки</label>
-                    <textarea name="text"></textarea>
+                    <label>Марка оборудования</label>
+                    <input name="device_brand"  type="text" />
+                </li>                   
+                <li>
+                    <label>Модель оборудования</label>
+                    <input name="device_model"  type="text" />
+                </li>                   
+
+                <li style="margin-top: 40px;">
+                    <label>Дата приема заявки на обслуживание</label>
+                    <input name="date"  type="text" value="{% now "d.m.Y"%}" readonly="readonly"/>
                 </li>                         
+                <li>
+                    <label>Текст заявки на обслуживание</label>
+                    <textarea name="text"></textarea>
+                </li>                   
+                <li>
+                    <label>Ожидаемое время исполнения заявки</label>
+                    <input name="estimate"  type="text" />
+                </li>                   
                 <li class="checkbox" style="margin-top: 30px">
                     <label>
                         <input name="company" type="checkbox" /> 

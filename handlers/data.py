@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from handlers.service import *
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
@@ -14,7 +15,6 @@ class RefImportUploadUrl(AppHandler):
         self.render_json([blobstore.create_upload_url('/service/ref/import/upload/'+key)])
 
 route('/service/ref/import/upload_url/:key', RefImportUploadUrl)
-
 
 
 
@@ -401,7 +401,6 @@ class ImportTask(ServiceHandler):
                         'imported': True
                     })
             else:
-
                 if u'parents' == col_info['id'].lower():
                     if val.strip() == '':
                         val = ref_import.root
